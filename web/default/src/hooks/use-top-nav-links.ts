@@ -85,6 +85,13 @@ export function useTopNavLinks(): TopNavLink[] {
     links.push({ title: t('Rankings'), href: '/rankings', requiresAuth })
   }
 
+  // Free Tokens
+  const freeTokens = modules?.freeTokens
+  if (freeTokens && typeof freeTokens === 'object' && freeTokens.enabled) {
+    const requiresAuth = freeTokens.requireAuth && !isAuthed
+    links.push({ title: t('Free Tokens'), href: '/free-tokens', requiresAuth })
+  }
+
   // Docs (supports external links)
   if (modules?.docs !== false) {
     if (docsLink) {

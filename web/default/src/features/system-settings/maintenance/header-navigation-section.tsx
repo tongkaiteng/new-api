@@ -53,6 +53,8 @@ const headerNavSchema = z.object({
   pricingRequireAuth: z.boolean(),
   rankingsEnabled: z.boolean(),
   rankingsRequireAuth: z.boolean(),
+  freeTokensEnabled: z.boolean(),
+  freeTokensRequireAuth: z.boolean(),
   docs: z.boolean(),
   about: z.boolean(),
 })
@@ -87,6 +89,14 @@ const toFormValues = (config: HeaderNavModulesConfig): HeaderNavFormValues => ({
     config.rankings?.requireAuth === undefined
       ? HEADER_NAV_DEFAULT.rankings.requireAuth
       : Boolean(config.rankings.requireAuth),
+  freeTokensEnabled:
+    config.freeTokens?.enabled === undefined
+      ? HEADER_NAV_DEFAULT.freeTokens.enabled
+      : Boolean(config.freeTokens.enabled),
+  freeTokensRequireAuth:
+    config.freeTokens?.requireAuth === undefined
+      ? HEADER_NAV_DEFAULT.freeTokens.requireAuth
+      : Boolean(config.freeTokens.requireAuth),
   docs:
     config.docs === undefined ? HEADER_NAV_DEFAULT.docs : Boolean(config.docs),
   about:
@@ -128,6 +138,11 @@ export function HeaderNavigationSection({
         ...(config.rankings ?? HEADER_NAV_DEFAULT.rankings),
         enabled: values.rankingsEnabled,
         requireAuth: values.rankingsRequireAuth,
+      },
+      freeTokens: {
+        ...(config.freeTokens ?? HEADER_NAV_DEFAULT.freeTokens),
+        enabled: values.freeTokensEnabled,
+        requireAuth: values.freeTokensRequireAuth,
       },
     }
 
@@ -176,7 +191,7 @@ export function HeaderNavigationSection({
   const accessModules: Array<{
     enabledKey: keyof HeaderNavFormValues
     requireAuthKey: keyof HeaderNavFormValues
-    requireAuthDependsOn: 'pricingEnabled' | 'rankingsEnabled'
+    requireAuthDependsOn: 'pricingEnabled' | 'rankingsEnabled' | 'freeTokensEnabled'
     title: string
     description: string
     requireAuthTitle: string
@@ -202,6 +217,17 @@ export function HeaderNavigationSection({
       requireAuthTitle: t('Require login to view rankings'),
       requireAuthDescription: t(
         'Visitors must authenticate before accessing the rankings page.'
+      ),
+    },
+    {
+      enabledKey: 'freeTokensEnabled',
+      requireAuthKey: 'freeTokensRequireAuth',
+      requireAuthDependsOn: 'freeTokensEnabled',
+      title: t('Free Tokens'),
+      description: t('Public page for claiming partner site redemption codes.'),
+      requireAuthTitle: t('Require login to view free tokens'),
+      requireAuthDescription: t(
+        'Visitors must authenticate before accessing the free tokens page.'
       ),
     },
   ]

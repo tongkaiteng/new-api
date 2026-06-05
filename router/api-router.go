@@ -38,6 +38,13 @@ func SetApiRouter(router *gin.Engine) {
 			perfMetricsRoute.GET("", controller.GetPerfMetrics)
 		}
 		apiRouter.GET("/rankings", middleware.HeaderNavModuleAuth("rankings"), controller.GetRankings)
+		apiRouter.GET("/free-tokens", middleware.HeaderNavModuleAuth("freeTokens"), controller.GetFreeTokens)
+		freeTokenRoute := apiRouter.Group("/free-tokens")
+		freeTokenRoute.Use(middleware.UserAuth())
+		{
+			freeTokenRoute.GET("/self", controller.GetFreeTokenClaimsSelf)
+			freeTokenRoute.POST("/:id/claim", middleware.CriticalRateLimit(), controller.ClaimFreeToken)
+		}
 		apiRouter.GET("/verification", middleware.EmailVerificationRateLimit(), middleware.TurnstileCheck(), controller.SendEmailVerification)
 		apiRouter.GET("/reset_password", middleware.CriticalRateLimit(), middleware.TurnstileCheck(), controller.SendPasswordResetEmail)
 		apiRouter.POST("/user/reset", middleware.CriticalRateLimit(), controller.ResetPassword)
@@ -301,6 +308,17 @@ func SetApiRouter(router *gin.Engine) {
 			redemptionRoute.PUT("/", controller.UpdateRedemption)
 			redemptionRoute.DELETE("/invalid", controller.DeleteInvalidRedemption)
 			redemptionRoute.DELETE("/:id", controller.DeleteRedemption)
+		}
+		freeTokenSiteRoute := apiRouter.Group("/free-token-site")
+		freeTokenSiteRoute.Use(middleware.AdminAuth())
+		{
+			freeTokenSiteRoute.GET("/", controller.GetAllFreeTokenSites)
+			freeTokenSiteRoute.GET("/search", controller.SearchFreeTokenSites)
+			freeTokenSiteRoute.GET("/:id", controller.GetFreeTokenSite)
+			freeTokenSiteRoute.POST("/", controller.AddFreeTokenSite)
+			freeTokenSiteRoute.PUT("/", controller.UpdateFreeTokenSite)
+			freeTokenSiteRoute.POST("/:id/codes", controller.AddFreeTokenSiteCodes)
+			freeTokenSiteRoute.DELETE("/:id", controller.DeleteFreeTokenSite)
 		}
 		logRoute := apiRouter.Group("/log")
 		logRoute.GET("/", middleware.AdminAuth(), controller.GetAllLogs)
