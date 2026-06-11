@@ -133,6 +133,8 @@ func InitOptionMap() {
 	common.OptionMap["QuotaForInvitee"] = strconv.Itoa(common.QuotaForInvitee)
 	common.OptionMap["QuotaRemindThreshold"] = strconv.Itoa(common.QuotaRemindThreshold)
 	common.OptionMap["PreConsumedQuota"] = strconv.Itoa(common.PreConsumedQuota)
+	common.OptionMap["FreeApiKeySubmitReward"] = strconv.Itoa(common.FreeApiKeySubmitReward)
+	common.OptionMap["FreeApiKeyClaimCost"] = strconv.Itoa(common.FreeApiKeyClaimCost)
 	common.OptionMap["ModelRequestRateLimitCount"] = strconv.Itoa(setting.ModelRequestRateLimitCount)
 	common.OptionMap["ModelRequestRateLimitDurationMinutes"] = strconv.Itoa(setting.ModelRequestRateLimitDurationMinutes)
 	common.OptionMap["ModelRequestRateLimitSuccessCount"] = strconv.Itoa(setting.ModelRequestRateLimitSuccessCount)
@@ -504,6 +506,10 @@ func updateOptionMap(key string, value string) (err error) {
 		common.QuotaRemindThreshold, _ = strconv.Atoi(value)
 	case "PreConsumedQuota":
 		common.PreConsumedQuota, _ = strconv.Atoi(value)
+	case "FreeApiKeySubmitReward":
+		common.FreeApiKeySubmitReward, _ = strconv.Atoi(value)
+	case "FreeApiKeyClaimCost":
+		common.FreeApiKeyClaimCost, _ = strconv.Atoi(value)
 	case "ModelRequestRateLimitCount":
 		setting.ModelRequestRateLimitCount, _ = strconv.Atoi(value)
 	case "ModelRequestRateLimitDurationMinutes":

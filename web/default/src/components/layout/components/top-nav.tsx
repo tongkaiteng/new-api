@@ -16,8 +16,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { useMemo } from 'react'
-import { Link } from '@tanstack/react-router'
+import { useMemo, useState, useCallback, useRef } from 'react'
+import { Link, useRouterState } from '@tanstack/react-router'
 import { Menu } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -25,6 +25,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuPortal,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { type TopNavLink } from '../types'
@@ -38,6 +42,41 @@ type TopNavProps = React.HTMLAttributes<HTMLElement> & {
  * 在大屏幕显示水平导航，在小屏幕显示下拉菜单
  */
 export function TopNav({ className, links, ...props }: TopNavProps) {
+  const routerState = useRouterState()
+  const pathname = routerState.location.pathname
+
+  // Hover state for desktop dropdowns
+  const [hoveredKey, setHoveredKey] = useState<string | null>(null)
+  const leaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const handleTriggerEnter = useCallback((key: string) => {
+    if (leaveTimerRef.current) {
+      clearTimeout(leaveTimerRef.current)
+      leaveTimerRef.current = null
+    }
+    setHoveredKey(key)
+  }, [])
+
+  const handleTriggerLeave = useCallback(() => {
+    leaveTimerRef.current = setTimeout(() => {
+      setHoveredKey(null)
+    }, 150)
+  }, [])
+
+  const handleContentEnter = useCallback((key: string) => {
+    if (leaveTimerRef.current) {
+      clearTimeout(leaveTimerRef.current)
+      leaveTimerRef.current = null
+    }
+    setHoveredKey(key)
+  }, [])
+
+  const handleContentLeave = useCallback(() => {
+    leaveTimerRef.current = setTimeout(() => {
+      setHoveredKey(null)
+    }, 150)
+  }, [])
+
   // 规范化链接，确保所有可选属性都有默认值
   const normalizedLinks = useMemo(
     () =>
@@ -61,8 +100,75 @@ export function TopNav({ className, links, ...props }: TopNavProps) {
             <Menu />
           </DropdownMenuTrigger>
           <DropdownMenuContent side='bottom' align='start'>
-            {normalizedLinks.map(
-              ({ title, href, isActive, disabled, external }) => (
+            {normalizedLinks.map((link) => {
+              const { title, href, isActive, disabled, external, children } =
+                link
+
+              // Render submenu for links with children
+              if (children && children.length > 0) {
+                return (
+                  <DropdownMenuSub key={`${title}-${href}`}>
+                    <DropdownMenuSubTrigger disabled={disabled}>
+                      <span className='relative'>
+                        {title}
+                        {link.badge && (
+                          <span className='absolute -top-1.5 -right-4 inline-flex items-center rounded bg-emerald-500 px-1 py-px text-[9px] font-semibold leading-none text-white'>
+                            {link.badge}
+                          </span>
+                        )}
+                      </span>
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent>
+                        {children.map((child) => {
+                          const childActive = pathname === child.href
+                          return child.external ? (
+                            <DropdownMenuItem
+                              key={`${child.title}-${child.href}`}
+                              disabled={child.disabled}
+                              render={
+                                <a
+                                  href={child.href}
+                                  target='_blank'
+                                  rel='noopener noreferrer'
+                                  className={
+                                    childActive
+                                      ? 'text-primary'
+                                      : 'text-muted-foreground'
+                                  }
+                                >
+                                  {child.title}
+                                </a>
+                              }
+                            />
+                          ) : (
+                            <DropdownMenuItem
+                              key={`${child.title}-${child.href}`}
+                              disabled={child.disabled}
+                              render={
+                                <Link
+                                  to={child.href}
+                                  disabled={child.disabled}
+                                  className={
+                                    childActive
+                                      ? 'text-primary'
+                                      : 'text-muted-foreground'
+                                  }
+                                >
+                                  {child.title}
+                                </Link>
+                              }
+                            />
+                          )
+                        })}
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
+                )
+              }
+
+              // Regular menu item
+              return (
                 <DropdownMenuItem
                   key={`${title}-${href}`}
                   render={
@@ -87,7 +193,7 @@ export function TopNav({ className, links, ...props }: TopNavProps) {
                   }
                 ></DropdownMenuItem>
               )
-            )}
+            })}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -100,8 +206,109 @@ export function TopNav({ className, links, ...props }: TopNavProps) {
         )}
         {...props}
       >
-        {normalizedLinks.map(({ title, href, isActive, disabled, external }) =>
-          external ? (
+        {normalizedLinks.map((link) => {
+          const { title, href, isActive, disabled, external, children } = link
+
+          // Render dropdown for links with children
+          if (children && children.length > 0) {
+            const key = `${title}-${href}`
+            const isOpen = hoveredKey === key
+            return (
+              <div
+                key={key}
+                onMouseEnter={() => handleTriggerEnter(key)}
+                onMouseLeave={handleTriggerLeave}
+              >
+                <DropdownMenu
+                  modal={false}
+                  open={isOpen}
+                  onOpenChange={(open) => {
+                    if (!open) setHoveredKey(null)
+                  }}
+                >
+                  <DropdownMenuTrigger
+                    render={
+                      <button
+                        disabled={disabled}
+                        className={cn(
+                          'relative text-sm font-medium transition-colors',
+                          'hover:text-primary',
+                          isActive ? 'text-foreground' : 'text-muted-foreground',
+                          disabled && 'pointer-events-none opacity-50'
+                        )}
+                      >
+                        {title}
+                        {link.badge && (
+                          <span className='absolute -top-1.5 -right-3.5 inline-flex items-center rounded bg-emerald-500 px-1 py-px text-[9px] font-semibold leading-none text-white'>
+                            {link.badge}
+                          </span>
+                        )}
+                      </button>
+                    }
+                  />
+                  <DropdownMenuContent
+                    side='bottom'
+                    align='start'
+                    onMouseEnter={() => handleContentEnter(key)}
+                    onMouseLeave={handleContentLeave}
+                  >
+                    {children.map((child) => {
+                      const childActive = pathname === child.href
+                      return child.external ? (
+                        <DropdownMenuItem
+                          key={`${child.title}-${child.href}`}
+                          disabled={child.disabled}
+                          className={cn(
+                            childActive &&
+                              'bg-accent text-accent-foreground font-medium'
+                          )}
+                          render={
+                            <a
+                              href={child.href}
+                              target='_blank'
+                              rel='noopener noreferrer'
+                              className={cn(
+                                childActive
+                                  ? 'text-primary'
+                                  : 'text-muted-foreground'
+                              )}
+                            >
+                              {child.title}
+                            </a>
+                          }
+                        />
+                      ) : (
+                        <DropdownMenuItem
+                          key={`${child.title}-${child.href}`}
+                          disabled={child.disabled}
+                          className={cn(
+                            childActive &&
+                              'bg-accent text-accent-foreground font-medium'
+                          )}
+                          render={
+                            <Link
+                              to={child.href}
+                              disabled={child.disabled}
+                              className={cn(
+                                childActive
+                                  ? 'text-primary'
+                                  : 'text-muted-foreground'
+                              )}
+                            >
+                              {child.title}
+                            </Link>
+                          }
+                        />
+                      )
+                    })}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            )
+          }
+
+          // Regular link
+          return external ? (
             <a
               key={`${title}-${href}`}
               href={href}
@@ -121,7 +328,7 @@ export function TopNav({ className, links, ...props }: TopNavProps) {
               {title}
             </Link>
           )
-        )}
+        })}
       </nav>
     </>
   )

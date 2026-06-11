@@ -91,6 +91,8 @@ export type TopNavLink = {
   disabled?: boolean
   requiresAuth?: boolean
   external?: boolean
+  badge?: string
+  children?: TopNavLink[]
 }
 
 /**

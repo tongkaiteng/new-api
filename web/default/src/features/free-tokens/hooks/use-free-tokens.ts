@@ -17,7 +17,16 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { claimFreeToken, getFreeTokenClaimsSelf, getFreeTokenSites } from '../api'
+import {
+  claimFreeApiKey,
+  claimFreeToken,
+  getClaimedFreeApiKeys,
+  getFreeApiKeys,
+  getFreeTokenClaimsSelf,
+  getFreeTokenSites,
+  submitFreeApiKey,
+} from '../api'
+import type { FreeApiKeySubmitPayload } from '../types'
 
 export function useFreeTokenSites() {
   return useQuery({
@@ -42,5 +51,47 @@ export function useClaimFreeToken() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['free-tokens'] })
     },
+  })
+}
+
+// Free API Keys
+export function useFreeApiKeys(params: {
+  p?: number
+  page_size?: number
+  keyword?: string
+  protocol?: number
+}) {
+  return useQuery({
+    queryKey: ['free-api-keys', params],
+    queryFn: () => getFreeApiKeys(params),
+  })
+}
+
+export function useSubmitFreeApiKey() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (payload: FreeApiKeySubmitPayload) => submitFreeApiKey(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['free-api-keys'] })
+    },
+  })
+}
+
+export function useClaimFreeApiKey() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (id: number) => claimFreeApiKey(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['free-api-keys'] })
+    },
+  })
+}
+
+export function useClaimedFreeApiKeys() {
+  return useQuery({
+    queryKey: ['free-api-keys', 'claimed'],
+    queryFn: getClaimedFreeApiKeys,
   })
 }

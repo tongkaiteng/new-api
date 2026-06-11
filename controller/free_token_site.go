@@ -237,6 +237,7 @@ func GetFreeTokens(c *gin.Context) {
 			TotalCount:     site.TotalCount,
 			AvailableCount: site.AvailableCount,
 			ClaimedCount:   site.ClaimedCount,
+			CreatedTime:    site.CreatedTime,
 		}
 		if claim, ok := claimMap[site.Id]; ok {
 			item.Claimed = true

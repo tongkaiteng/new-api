@@ -28,6 +28,8 @@ export type TopNavLink = {
   disabled?: boolean
   requiresAuth?: boolean
   external?: boolean
+  badge?: string
+  children?: TopNavLink[]
 }
 
 /**
@@ -85,11 +87,20 @@ export function useTopNavLinks(): TopNavLink[] {
     links.push({ title: t('Rankings'), href: '/rankings', requiresAuth })
   }
 
-  // Free Tokens
+  // Free Token (dropdown)
   const freeTokens = modules?.freeTokens
   if (freeTokens && typeof freeTokens === 'object' && freeTokens.enabled) {
     const requiresAuth = freeTokens.requireAuth && !isAuthed
-    links.push({ title: t('Free Tokens'), href: '/free-tokens', requiresAuth })
+    links.push({
+      title: t('Free Token'),
+      href: '/free-tokens',
+      requiresAuth,
+      badge: t('New'),
+      children: [
+        { title: t('Free API Key'), href: '/free-tokens/api-keys' },
+        { title: t('Free Redeem Code'), href: '/free-tokens', requiresAuth },
+      ],
+    })
   }
 
   // Docs (supports external links)

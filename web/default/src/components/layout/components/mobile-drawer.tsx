@@ -265,13 +265,38 @@ export function MobileDrawer({
                         className='border-border border-b p-2.5 last:border-b-0'
                         variants={MOBILE_DRAWER_ANIMATION.menuItem as Variants}
                       >
-                        <Link
-                          to={link.href}
-                          className='text-primary/60 hover:text-primary/80 transition-colors'
-                          onClick={onClose}
-                        >
-                          {link.title}
-                        </Link>
+                        {link.children && link.children.length > 0 ? (
+                          <>
+                            <div className='text-primary/60 mb-1 flex items-center gap-1.5 font-medium'>
+                              {link.title}
+                              {link.badge && (
+                                <span className='inline-flex items-center rounded bg-emerald-500 px-1.5 py-px text-[10px] font-semibold leading-none text-white'>
+                                  {link.badge}
+                                </span>
+                              )}
+                            </div>
+                            <div className='flex flex-col gap-0.5 pl-3'>
+                              {link.children.map((child, ci) => (
+                                <Link
+                                  key={ci}
+                                  to={child.href}
+                                  className='text-primary/60 hover:text-primary/80 transition-colors'
+                                  onClick={onClose}
+                                >
+                                  {child.title}
+                                </Link>
+                              ))}
+                            </div>
+                          </>
+                        ) : (
+                          <Link
+                            to={link.href}
+                            className='text-primary/60 hover:text-primary/80 transition-colors'
+                            onClick={onClose}
+                          >
+                            {link.title}
+                          </Link>
+                        )}
                       </motion.div>
                     ))}
                   </AnimatePresence>

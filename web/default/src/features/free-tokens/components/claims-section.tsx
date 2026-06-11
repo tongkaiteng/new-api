@@ -61,8 +61,8 @@ export function FreeTokenClaimsSection(props: FreeTokenClaimsSectionProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>{t('Site')}</TableHead>
-              <TableHead>{t('Bonus')}</TableHead>
+              <TableHead>{t('Site name')}</TableHead>
+              <TableHead>{t('Bonus label')}</TableHead>
               <TableHead>{t('Code')}</TableHead>
               <TableHead>{t('Claimed at')}</TableHead>
               <TableHead className='text-right'>{t('Actions')}</TableHead>

@@ -284,6 +284,8 @@ func migrateDB() error {
 		&FreeTokenSite{},
 		&FreeTokenClaim{},
 		&FreeTokenSiteCode{},
+		&FreeTokenApiKey{},
+		&FreeTokenApiKeyClaim{},
 	)
 	if err != nil {
 		return err

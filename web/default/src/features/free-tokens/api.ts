@@ -20,6 +20,8 @@ import { api } from '@/lib/api'
 import type {
   ApiResponse,
   ClaimFreeTokenResponse,
+  FreeApiKey,
+  FreeApiKeySubmitPayload,
   FreeTokenClaimRecord,
   FreeTokenSitePublic,
 } from './types'
@@ -42,5 +44,39 @@ export async function claimFreeToken(
   siteId: number
 ): Promise<ApiResponse<ClaimFreeTokenResponse>> {
   const res = await api.post(`/api/free-tokens/${siteId}/claim`)
+  return res.data
+}
+
+// Free API Keys
+export async function submitFreeApiKey(
+  payload: FreeApiKeySubmitPayload
+): Promise<ApiResponse<FreeApiKey>> {
+  const res = await api.post('/api/free-tokens/api-keys/', payload)
+  return res.data
+}
+
+export async function getFreeApiKeys(params: {
+  p?: number
+  page_size?: number
+  keyword?: string
+  protocol?: number
+}): Promise<
+  ApiResponse<{ items: FreeApiKey[]; total: number; page: number; page_size: number }>
+> {
+  const res = await api.get('/api/free-tokens/api-keys/', { params })
+  return res.data
+}
+
+export async function claimFreeApiKey(
+  id: number
+): Promise<ApiResponse<FreeApiKey>> {
+  const res = await api.post(`/api/free-tokens/api-keys/${id}/claim`)
+  return res.data
+}
+
+export async function getClaimedFreeApiKeys(): Promise<
+  ApiResponse<FreeApiKey[]>
+> {
+  const res = await api.get('/api/free-tokens/api-keys/claimed')
   return res.data
 }

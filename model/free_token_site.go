@@ -50,6 +50,7 @@ type FreeTokenSitePublic struct {
 	TotalCount     int    `json:"total_count"`
 	AvailableCount int    `json:"available_count"`
 	ClaimedCount   int    `json:"claimed_count"`
+	CreatedTime    int64  `json:"created_time"`
 	Claimed        bool   `json:"claimed"`
 	Code           string `json:"code,omitempty"`
 }

@@ -120,6 +120,8 @@ func GetStatus(c *gin.Context) {
 		"user_agreement_enabled":      legalSetting.UserAgreement != "",
 		"privacy_policy_enabled":      legalSetting.PrivacyPolicy != "",
 		"checkin_enabled":             operation_setting.GetCheckinSetting().Enabled,
+		"free_api_key_submit_reward":  common.FreeApiKeySubmitReward,
+		"free_api_key_claim_cost":     common.FreeApiKeyClaimCost,
 	}
 
 	// 根据启用状态注入可选内容

@@ -16,7 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useRouterState } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '@/stores/auth-store'
@@ -26,6 +26,12 @@ import { useSystemConfig } from '@/hooks/use-system-config'
 import { useTopNavLinks } from '@/hooks/use-top-nav-links'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Dialog } from '@/components/dialog'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { NotificationPopover } from '@/components/notification-popover'
@@ -90,6 +96,26 @@ export function PublicHeader(props: PublicHeaderProps) {
   const notifications = useNotifications()
   const routerState = useRouterState()
   const pathname = routerState.location.pathname
+
+  // Hover state for desktop dropdowns
+  const [hoveredDropdownIdx, setHoveredDropdownIdx] = useState<number | null>(
+    null
+  )
+  const leaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const handleDropdownEnter = useCallback((idx: number) => {
+    if (leaveTimerRef.current) {
+      clearTimeout(leaveTimerRef.current)
+      leaveTimerRef.current = null
+    }
+    setHoveredDropdownIdx(idx)
+  }, [])
+
+  const handleDropdownLeave = useCallback(() => {
+    leaveTimerRef.current = setTimeout(() => {
+      setHoveredDropdownIdx(null)
+    }, 150)
+  }, [])
 
   const user = auth.user
   const isAuthenticated = !!user
@@ -216,6 +242,103 @@ export function PublicHeader(props: PublicHeaderProps) {
             <div className='hidden items-center gap-0.5 sm:flex'>
               {links.map((link, i) => {
                 const isActive = pathname === link.href
+                const { children } = link
+
+                // Render dropdown for links with children
+                if (children && children.length > 0) {
+                  const isOpen = hoveredDropdownIdx === i
+                  return (
+                    <div
+                      key={i}
+                      onMouseEnter={() => handleDropdownEnter(i)}
+                      onMouseLeave={handleDropdownLeave}
+                    >
+                      <DropdownMenu
+                        modal={false}
+                        open={isOpen}
+                        onOpenChange={(open) => {
+                          if (!open) setHoveredDropdownIdx(null)
+                        }}
+                      >
+                        <DropdownMenuTrigger
+                          render={
+                            <button
+                              disabled={link.disabled}
+                              className={cn(
+                                'relative rounded-lg px-3 py-1.5 text-[13px] font-medium transition-colors duration-200',
+                                isActive
+                                  ? 'text-foreground'
+                                  : 'text-muted-foreground hover:text-foreground',
+                                link.disabled &&
+                                  'pointer-events-none opacity-50'
+                              )}
+                            >
+                              {t(link.title)}
+                              {link.badge && (
+                                <span className='absolute -top-1.5 -right-3.5 inline-flex items-center rounded bg-emerald-500 px-1 py-px text-[9px] font-semibold leading-none text-white'>
+                                  {link.badge}
+                                </span>
+                              )}
+                            </button>
+                          }
+                        />
+                        <DropdownMenuContent
+                          side='bottom'
+                          align='start'
+                          onMouseEnter={() => handleDropdownEnter(i)}
+                          onMouseLeave={handleDropdownLeave}
+                        >
+                          {children.map((child, ci) => {
+                            const childActive = pathname === child.href
+                            return child.external ? (
+                              <DropdownMenuItem
+                                key={ci}
+                                disabled={child.disabled}
+                                className={cn(
+                                  childActive &&
+                                    'bg-accent text-accent-foreground font-medium'
+                                )}
+                                render={
+                                  <a
+                                    href={child.href}
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    className={
+                                      childActive ? 'text-primary' : ''
+                                    }
+                                  >
+                                    {t(child.title)}
+                                  </a>
+                                }
+                              />
+                            ) : (
+                              <DropdownMenuItem
+                                key={ci}
+                                disabled={child.disabled}
+                                className={cn(
+                                  childActive &&
+                                    'bg-accent text-accent-foreground font-medium'
+                                )}
+                                render={
+                                  <Link
+                                    to={child.href}
+                                    disabled={child.disabled}
+                                    className={
+                                      childActive ? 'text-primary' : ''
+                                    }
+                                  >
+                                    {t(child.title)}
+                                  </Link>
+                                }
+                              />
+                            )
+                          })}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  )
+                }
+
                 if (link.external) {
                   return (
                     <a
@@ -359,6 +482,84 @@ export function PublicHeader(props: PublicHeaderProps) {
               const transitionStyle = {
                 transitionDelay: mobileOpen ? `${100 + i * 50}ms` : '0ms',
               }
+
+              // Render parent with children as indented sub-items
+              if (link.children && link.children.length > 0) {
+                return (
+                  <div key={i} style={transitionStyle}>
+                    <div
+                      className={cn(
+                        'relative flex items-center gap-3 py-3 text-base font-medium tracking-tight transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]',
+                        mobileOpen
+                          ? 'translate-y-0 opacity-100'
+                          : 'translate-y-4 opacity-0',
+                        isActive ? 'text-foreground' : 'text-muted-foreground',
+                        link.disabled && 'pointer-events-none opacity-50'
+                      )}
+                    >
+                      {t(link.title)}
+                      {link.badge && (
+                        <span className='inline-flex items-center rounded bg-emerald-500 px-1.5 py-px text-[10px] font-semibold leading-none text-white'>
+                          {link.badge}
+                        </span>
+                      )}
+                    </div>
+                    <div className='flex flex-col gap-0 pl-4'>
+                      {link.children.map((child, ci) => {
+                        const childClassName = cn(
+                          'flex items-center gap-3 py-2.5 text-sm font-medium transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]',
+                          mobileOpen
+                            ? 'translate-y-0 opacity-100'
+                            : 'translate-y-4 opacity-0',
+                          pathname === child.href
+                            ? 'text-foreground'
+                            : 'text-muted-foreground',
+                          child.disabled && 'pointer-events-none opacity-50'
+                        )
+                        const childTransitionStyle = {
+                          transitionDelay: mobileOpen
+                            ? `${100 + i * 50 + ci * 30}ms`
+                            : '0ms',
+                        }
+                        if (child.external) {
+                          return (
+                            <a
+                              key={ci}
+                              href={child.href}
+                              target='_blank'
+                              rel='noopener noreferrer'
+                              aria-disabled={child.disabled}
+                              tabIndex={child.disabled ? -1 : undefined}
+                              onClick={(event) =>
+                                handleNavLinkClick(event, child, true)
+                              }
+                              className={childClassName}
+                              style={childTransitionStyle}
+                            >
+                              {t(child.title)}
+                            </a>
+                          )
+                        }
+                        return (
+                          <Link
+                            key={ci}
+                            to={child.href}
+                            disabled={child.disabled}
+                            onClick={(event) =>
+                              handleNavLinkClick(event, child, true)
+                            }
+                            className={childClassName}
+                            style={childTransitionStyle}
+                          >
+                            {t(child.title)}
+                          </Link>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )
+              }
+
               if (link.external) {
                 return (
                   <a

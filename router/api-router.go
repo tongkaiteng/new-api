@@ -46,6 +46,13 @@ func SetApiRouter(router *gin.Engine) {
 			freeTokenRoute.GET("/self", controller.GetFreeTokenClaimsSelf)
 			freeTokenRoute.POST("/:id/claim", middleware.CriticalRateLimit(), controller.ClaimFreeToken)
 		}
+		freeApiKeyRoute := apiRouter.Group("/free-tokens/api-keys")
+		{
+			freeApiKeyRoute.GET("/", middleware.TryUserAuth(), controller.GetFreeApiKeys)
+			freeApiKeyRoute.GET("/claimed", middleware.UserAuth(), controller.GetClaimedFreeApiKeys)
+			freeApiKeyRoute.POST("/", middleware.UserAuth(), controller.SubmitFreeApiKey)
+			freeApiKeyRoute.POST("/:id/claim", middleware.UserAuth(), controller.ClaimFreeApiKey)
+		}
 		apiRouter.GET("/verification", middleware.EmailVerificationRateLimit(), middleware.TurnstileCheck(), controller.SendEmailVerification)
 		apiRouter.GET("/reset_password", middleware.CriticalRateLimit(), middleware.TurnstileCheck(), controller.SendPasswordResetEmail)
 		apiRouter.POST("/user/reset", middleware.CriticalRateLimit(), anonymousRequestBodyLimit, controller.ResetPassword)

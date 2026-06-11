@@ -29,6 +29,7 @@ export const freeTokenSitePublicSchema = z.object({
   total_count: z.number(),
   available_count: z.number(),
   claimed_count: z.number(),
+  created_time: z.number(),
   claimed: z.boolean(),
   code: z.string().optional(),
 })
@@ -55,3 +56,48 @@ export type ApiResponse<T = unknown> = {
 }
 
 export type ClaimFreeTokenResponse = FreeTokenClaimRecord
+
+export const freeApiKeySchema = z.object({
+  id: z.number(),
+  user_id: z.number(),
+  username: z.string(),
+  api_address: z.string(),
+  protocol: z.number(),
+  api_key: z.string(),
+  models: z.string(),
+  note: z.string(),
+  claim_count: z.number(),
+  claim_cost: z.number(),
+  claimed: z.boolean(),
+  claimed_time: z.number().optional(),
+  created_time: z.number(),
+})
+
+export type FreeApiKey = z.infer<typeof freeApiKeySchema>
+
+export type FreeApiKeySubmitPayload = {
+  api_address: string
+  protocol: number
+  api_key: string
+  models: string
+  note: string
+}
+
+export const PROTOCOL_OPTIONS = [
+  { value: 1, key: 'OpenAI v1' },
+  { value: 2, key: 'Anthropic Message' },
+  { value: 3, key: 'Gemini' },
+  { value: 4, key: 'Custom' },
+] as const
+
+export const COMMON_MODELS = [
+  'gpt-4o',
+  'gpt-4o-mini',
+  'gpt-4.1',
+  'claude-sonnet-4-6',
+  'claude-haiku-4-5',
+  'gemini-2.5-flash',
+  'gemini-2.5-pro',
+  'deepseek-v3',
+  'deepseek-r1',
+] as const

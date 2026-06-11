@@ -25,19 +25,16 @@ import { PageTransition } from '@/components/page-transition'
 import { useAuthStore } from '@/stores/auth-store'
 import {
   useClaimFreeToken,
-  useFreeTokenClaims,
   useFreeTokenSites,
 } from './hooks/use-free-tokens'
-import { FreeTokenClaimsSection } from './components/claims-section'
-import { FreeTokensHero } from './components/free-tokens-hero'
-import { FreeTokenSiteCard } from './components/site-card'
+
+import { FreeTokenSiteTable } from './components/site-card'
+import { FreeTokensToolbar } from './components/free-tokens-toolbar'
 
 function FreeTokensLoading() {
   return (
-    <div className='grid gap-4 sm:grid-cols-2 xl:grid-cols-3'>
-      {Array.from({ length: 6 }).map((_, index) => (
-        <Skeleton key={index} className='h-64 rounded-xl' />
-      ))}
+    <div className='overflow-hidden rounded-xl border'>
+      <Skeleton className='h-[300px] w-full rounded-none' />
     </div>
   )
 }
@@ -49,11 +46,9 @@ export function FreeTokens() {
   const isAuthed = Boolean(authUser)
 
   const sitesQuery = useFreeTokenSites()
-  const claimsQuery = useFreeTokenClaims(isAuthed)
   const claimMutation = useClaimFreeToken()
 
   const sites = sitesQuery.data?.data ?? []
-  const claims = claimsQuery.data?.data ?? []
 
   const handleSignIn = () => {
     navigate({
@@ -78,7 +73,13 @@ export function FreeTokens() {
   return (
     <PublicLayout showMainContainer={false}>
       <PageTransition className='mx-auto w-full max-w-[1280px] space-y-10 px-3 py-16 sm:px-6 sm:py-20 xl:px-8'>
-        <FreeTokensHero />
+
+        {/* Toolbar */}
+        <FreeTokensToolbar
+          isAuthed={isAuthed}
+          authUser={authUser}
+          onSignIn={handleSignIn}
+        />
 
         {sitesQuery.isLoading ? (
           <FreeTokensLoading />
@@ -87,29 +88,16 @@ export function FreeTokens() {
             {t('No free token offers available right now.')}
           </div>
         ) : (
-          <div className='grid gap-4 sm:grid-cols-2 xl:grid-cols-3'>
-            {sites.map((site) => (
-              <FreeTokenSiteCard
-                key={site.id}
-                site={site}
-                isAuthed={isAuthed}
-                claiming={
-                  claimMutation.isPending && claimMutation.variables === site.id
-                }
-                onClaim={handleClaim}
-                onSignIn={handleSignIn}
-              />
-            ))}
-          </div>
+          <FreeTokenSiteTable
+            sites={sites}
+            isAuthed={isAuthed}
+            claimingSiteId={
+              claimMutation.isPending ? claimMutation.variables : null
+            }
+            onClaim={handleClaim}
+            onSignIn={handleSignIn}
+          />
         )}
-
-        {isAuthed ? (
-          claimsQuery.isLoading ? (
-            <Skeleton className='h-40 rounded-xl' />
-          ) : (
-            <FreeTokenClaimsSection claims={claims} />
-          )
-        ) : null}
       </PageTransition>
     </PublicLayout>
   )

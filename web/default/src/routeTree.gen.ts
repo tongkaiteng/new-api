@@ -20,6 +20,9 @@ import { Route as PricingIndexRouteImport } from './routes/pricing/index'
 import { Route as FreeTokensIndexRouteImport } from './routes/free-tokens/index'
 import { Route as AboutIndexRouteImport } from './routes/about/index'
 import { Route as OauthProviderRouteImport } from './routes/oauth/$provider'
+import { Route as FreeTokensShareRouteImport } from './routes/free-tokens/share'
+import { Route as FreeTokensClaimsRouteImport } from './routes/free-tokens/claims'
+import { Route as FreeTokensApiKeysRouteImport } from './routes/free-tokens/api-keys'
 import { Route as ConsoleTopupRouteImport } from './routes/console/topup'
 import { Route as ConsoleLogRouteImport } from './routes/console/log'
 import { Route as AuthenticatedChat2linkRouteImport } from './routes/_authenticated/chat2link'
@@ -122,6 +125,21 @@ const AboutIndexRoute = AboutIndexRouteImport.update({
 const OauthProviderRoute = OauthProviderRouteImport.update({
   id: '/oauth/$provider',
   path: '/oauth/$provider',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FreeTokensShareRoute = FreeTokensShareRouteImport.update({
+  id: '/free-tokens/share',
+  path: '/free-tokens/share',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FreeTokensClaimsRoute = FreeTokensClaimsRouteImport.update({
+  id: '/free-tokens/claims',
+  path: '/free-tokens/claims',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FreeTokensApiKeysRoute = FreeTokensApiKeysRouteImport.update({
+  id: '/free-tokens/api-keys',
+  path: '/free-tokens/api-keys',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConsoleTopupRoute = ConsoleTopupRouteImport.update({
@@ -425,6 +443,9 @@ export interface FileRoutesByFullPath {
   '/chat2link': typeof AuthenticatedChat2linkRoute
   '/console/log': typeof ConsoleLogRoute
   '/console/topup': typeof ConsoleTopupRoute
+  '/free-tokens/api-keys': typeof FreeTokensApiKeysRoute
+  '/free-tokens/claims': typeof FreeTokensClaimsRoute
+  '/free-tokens/share': typeof FreeTokensShareRoute
   '/oauth/$provider': typeof OauthProviderRoute
   '/about/': typeof AboutIndexRoute
   '/free-tokens/': typeof FreeTokensIndexRoute
@@ -485,6 +506,9 @@ export interface FileRoutesByTo {
   '/chat2link': typeof AuthenticatedChat2linkRoute
   '/console/log': typeof ConsoleLogRoute
   '/console/topup': typeof ConsoleTopupRoute
+  '/free-tokens/api-keys': typeof FreeTokensApiKeysRoute
+  '/free-tokens/claims': typeof FreeTokensClaimsRoute
+  '/free-tokens/share': typeof FreeTokensShareRoute
   '/oauth/$provider': typeof OauthProviderRoute
   '/about': typeof AboutIndexRoute
   '/free-tokens': typeof FreeTokensIndexRoute
@@ -549,6 +573,9 @@ export interface FileRoutesById {
   '/_authenticated/chat2link': typeof AuthenticatedChat2linkRoute
   '/console/log': typeof ConsoleLogRoute
   '/console/topup': typeof ConsoleTopupRoute
+  '/free-tokens/api-keys': typeof FreeTokensApiKeysRoute
+  '/free-tokens/claims': typeof FreeTokensClaimsRoute
+  '/free-tokens/share': typeof FreeTokensShareRoute
   '/oauth/$provider': typeof OauthProviderRoute
   '/about/': typeof AboutIndexRoute
   '/free-tokens/': typeof FreeTokensIndexRoute
@@ -612,6 +639,9 @@ export interface FileRouteTypes {
     | '/chat2link'
     | '/console/log'
     | '/console/topup'
+    | '/free-tokens/api-keys'
+    | '/free-tokens/claims'
+    | '/free-tokens/share'
     | '/oauth/$provider'
     | '/about/'
     | '/free-tokens/'
@@ -672,6 +702,9 @@ export interface FileRouteTypes {
     | '/chat2link'
     | '/console/log'
     | '/console/topup'
+    | '/free-tokens/api-keys'
+    | '/free-tokens/claims'
+    | '/free-tokens/share'
     | '/oauth/$provider'
     | '/about'
     | '/free-tokens'
@@ -735,6 +768,9 @@ export interface FileRouteTypes {
     | '/_authenticated/chat2link'
     | '/console/log'
     | '/console/topup'
+    | '/free-tokens/api-keys'
+    | '/free-tokens/claims'
+    | '/free-tokens/share'
     | '/oauth/$provider'
     | '/about/'
     | '/free-tokens/'
@@ -790,6 +826,9 @@ export interface RootRouteChildren {
   errors503Route: typeof errors503Route
   ConsoleLogRoute: typeof ConsoleLogRoute
   ConsoleTopupRoute: typeof ConsoleTopupRoute
+  FreeTokensApiKeysRoute: typeof FreeTokensApiKeysRoute
+  FreeTokensClaimsRoute: typeof FreeTokensClaimsRoute
+  FreeTokensShareRoute: typeof FreeTokensShareRoute
   OauthProviderRoute: typeof OauthProviderRoute
   AboutIndexRoute: typeof AboutIndexRoute
   FreeTokensIndexRoute: typeof FreeTokensIndexRoute
@@ -876,6 +915,27 @@ declare module '@tanstack/react-router' {
       path: '/oauth/$provider'
       fullPath: '/oauth/$provider'
       preLoaderRoute: typeof OauthProviderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/free-tokens/share': {
+      id: '/free-tokens/share'
+      path: '/free-tokens/share'
+      fullPath: '/free-tokens/share'
+      preLoaderRoute: typeof FreeTokensShareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/free-tokens/claims': {
+      id: '/free-tokens/claims'
+      path: '/free-tokens/claims'
+      fullPath: '/free-tokens/claims'
+      preLoaderRoute: typeof FreeTokensClaimsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/free-tokens/api-keys': {
+      id: '/free-tokens/api-keys'
+      path: '/free-tokens/api-keys'
+      fullPath: '/free-tokens/api-keys'
+      preLoaderRoute: typeof FreeTokensApiKeysRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/console/topup': {
@@ -1376,6 +1436,9 @@ const rootRouteChildren: RootRouteChildren = {
   errors503Route: errors503Route,
   ConsoleLogRoute: ConsoleLogRoute,
   ConsoleTopupRoute: ConsoleTopupRoute,
+  FreeTokensApiKeysRoute: FreeTokensApiKeysRoute,
+  FreeTokensClaimsRoute: FreeTokensClaimsRoute,
+  FreeTokensShareRoute: FreeTokensShareRoute,
   OauthProviderRoute: OauthProviderRoute,
   AboutIndexRoute: AboutIndexRoute,
   FreeTokensIndexRoute: FreeTokensIndexRoute,

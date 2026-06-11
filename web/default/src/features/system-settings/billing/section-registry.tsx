@@ -61,6 +61,8 @@ const BILLING_SECTIONS = [
           PreConsumedQuota: settings.PreConsumedQuota,
           QuotaForInviter: settings.QuotaForInviter,
           QuotaForInvitee: settings.QuotaForInvitee,
+          FreeApiKeySubmitReward: settings.FreeApiKeySubmitReward,
+          FreeApiKeyClaimCost: settings.FreeApiKeyClaimCost,
           TopUpLink: settings.TopUpLink,
           general_setting: {
             docs_link: settings['general_setting.docs_link'],
