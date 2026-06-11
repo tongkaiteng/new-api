@@ -74,6 +74,11 @@ export function FreeTokens() {
     <PublicLayout showMainContainer={false}>
       <PageTransition className='mx-auto w-full max-w-[1280px] space-y-10 px-3 py-16 sm:px-6 sm:py-20 xl:px-8'>
 
+        {/* Page title */}
+        <h1 className='text-2xl font-extrabold tracking-tight sm:text-3xl'>
+          {t('Get Redeem Code')}
+        </h1>
+
         {/* Toolbar */}
         <FreeTokensToolbar
           isAuthed={isAuthed}

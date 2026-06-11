@@ -72,11 +72,10 @@ export function ClaimedApiKeysSection() {
         <TableHeader>
           <TableRow>
             <TableHead>{t('API Address')}</TableHead>
-            <TableHead>{t('Protocol Format')}</TableHead>
             <TableHead>{t('API Key')}</TableHead>
+            <TableHead>{t('Protocol Format')}</TableHead>
             <TableHead>{t('Supported Models')}</TableHead>
             <TableHead>{t('Claimed at')}</TableHead>
-            <TableHead className='text-right'>{t('Actions')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -84,22 +83,17 @@ export function ClaimedApiKeysSection() {
             <TableRow key={item.id}>
               <TableCell className='max-w-[160px] truncate font-mono text-xs'>
                 {item.api_address}
-              </TableCell>
-              <TableCell>
-                <Badge variant='outline' className='text-xs'>
-                  {getProtocolLabel(item.protocol)}
-                </Badge>
+                <Button
+                  type='button'
+                  variant='ghost'
+                  size='sm'
+                  onClick={() => copyToClipboard(item.api_address)}
+                >
+                  <Copy className='mr-1.5 h-3.5 w-3.5' />
+                </Button>
               </TableCell>
               <TableCell className='max-w-[120px] truncate font-mono text-xs'>
                 {item.api_key}
-              </TableCell>
-              <TableCell className='max-w-[140px] truncate text-xs'>
-                {item.models}
-              </TableCell>
-              <TableCell className='text-sm'>
-                {item.claimed_time ? formatTimestamp(item.claimed_time) : '—'}
-              </TableCell>
-              <TableCell className='text-right'>
                 <Button
                   type='button'
                   variant='ghost'
@@ -107,8 +101,18 @@ export function ClaimedApiKeysSection() {
                   onClick={() => copyToClipboard(item.api_key)}
                 >
                   <Copy className='mr-1.5 h-3.5 w-3.5' />
-                  {t('Copy')}
                 </Button>
+              </TableCell>
+              <TableCell>
+                <Badge variant='outline' className='text-xs'>
+                  {getProtocolLabel(item.protocol)}
+                </Badge>
+              </TableCell>
+              <TableCell className='max-w-[140px] truncate text-xs'>
+                {item.models}
+              </TableCell>
+              <TableCell className='text-sm'>
+                {item.claimed_time ? formatTimestamp(item.claimed_time) : '—'}
               </TableCell>
             </TableRow>
           ))}

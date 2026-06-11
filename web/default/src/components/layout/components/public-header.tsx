@@ -19,6 +19,7 @@ For commercial licensing, please contact support@quantumnous.com
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useRouterState } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
+import { ChevronDown } from 'lucide-react'
 import { useAuthStore } from '@/stores/auth-store'
 import { cn } from '@/lib/utils'
 import { useNotifications } from '@/hooks/use-notifications'
@@ -247,6 +248,10 @@ export function PublicHeader(props: PublicHeaderProps) {
                 // Render dropdown for links with children
                 if (children && children.length > 0) {
                   const isOpen = hoveredDropdownIdx === i
+                  const parentActive =
+                    pathname === link.href ||
+                    pathname.startsWith(link.href + '/') ||
+                    children.some((c) => pathname === c.href)
                   return (
                     <div
                       key={i}
@@ -265,15 +270,16 @@ export function PublicHeader(props: PublicHeaderProps) {
                             <button
                               disabled={link.disabled}
                               className={cn(
-                                'relative rounded-lg px-3 py-1.5 text-[13px] font-medium transition-colors duration-200',
-                                isActive
-                                  ? 'text-foreground'
+                                'relative inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-[13px] font-medium transition-colors duration-200',
+                                parentActive
+                                  ? 'bg-accent text-accent-foreground'
                                   : 'text-muted-foreground hover:text-foreground',
                                 link.disabled &&
                                   'pointer-events-none opacity-50'
                               )}
                             >
                               {t(link.title)}
+                              <ChevronDown className='h-3 w-3 opacity-50' />
                               {link.badge && (
                                 <span className='absolute -top-1.5 -right-3.5 inline-flex items-center rounded bg-emerald-500 px-1 py-px text-[9px] font-semibold leading-none text-white'>
                                   {link.badge}
@@ -367,7 +373,7 @@ export function PublicHeader(props: PublicHeaderProps) {
                     className={cn(
                       'rounded-lg px-3 py-1.5 text-[13px] font-medium transition-colors duration-200',
                       isActive
-                        ? 'text-foreground'
+                        ? 'bg-accent text-accent-foreground'
                         : 'text-muted-foreground hover:text-foreground',
                       link.disabled && 'pointer-events-none opacity-50'
                     )}
@@ -485,6 +491,10 @@ export function PublicHeader(props: PublicHeaderProps) {
 
               // Render parent with children as indented sub-items
               if (link.children && link.children.length > 0) {
+                const parentActive =
+                  pathname === link.href ||
+                  pathname.startsWith(link.href + '/') ||
+                  link.children.some((c) => pathname === c.href)
                 return (
                   <div key={i} style={transitionStyle}>
                     <div
@@ -493,11 +503,12 @@ export function PublicHeader(props: PublicHeaderProps) {
                         mobileOpen
                           ? 'translate-y-0 opacity-100'
                           : 'translate-y-4 opacity-0',
-                        isActive ? 'text-foreground' : 'text-muted-foreground',
+                        parentActive ? 'text-foreground' : 'text-muted-foreground',
                         link.disabled && 'pointer-events-none opacity-50'
                       )}
                     >
                       {t(link.title)}
+                      <ChevronDown className='h-4 w-4 opacity-40' />
                       {link.badge && (
                         <span className='inline-flex items-center rounded bg-emerald-500 px-1.5 py-px text-[10px] font-semibold leading-none text-white'>
                           {link.badge}

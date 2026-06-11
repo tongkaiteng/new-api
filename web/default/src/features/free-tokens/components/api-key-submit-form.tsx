@@ -16,7 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { useState } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -31,9 +31,11 @@ import {
   SelectTrigger,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { COMMON_MODELS, PROTOCOL_OPTIONS, type FreeApiKeySubmitPayload } from '../types'
+import { Checkbox } from '@/components/ui/checkbox'
+import { MODEL_OPTIONS, PROTOCOL_OPTIONS, type FreeApiKeySubmitPayload, type ModelOption } from '../types'
 import { useSubmitFreeApiKey } from '../hooks/use-free-tokens'
 import { useStatus } from '@/hooks/use-status'
+import { useAuthStore } from '@/stores/auth-store'
 import { formatQuota } from '@/lib/format'
 
 const PROTOCOL_HINTS: Record<number, string> = {
@@ -43,11 +45,19 @@ const PROTOCOL_HINTS: Record<number, string> = {
   4: 'Only select this when the API does not match any of the above three types.',
 }
 
+/** Mask API key showing only first and last few characters */
+function maskApiKey(key: string): string {
+  if (!key) return ''
+  if (key.length <= 16) return `${key.slice(0, 4)}...${key.slice(-4)}`
+  return `${key.slice(0, 8)}...${key.slice(-8)}`
+}
+
 export function FreeApiKeySubmitForm() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const mutation = useSubmitFreeApiKey()
   const { status } = useStatus()
+  const isAuthed = Boolean(useAuthStore((s) => s.auth.user))
 
   const submitReward = (status?.free_api_key_submit_reward as number) ?? 0
 
@@ -56,14 +66,33 @@ export function FreeApiKeySubmitForm() {
   const [apiKey, setApiKey] = useState('')
   const [selectedModels, setSelectedModels] = useState<string[]>([])
   const [customModel, setCustomModel] = useState('')
+  const [modelFilter, setModelFilter] = useState('')
   const [note, setNote] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [apiKeyFocused, setApiKeyFocused] = useState(false)
+  const apiKeyInputRef = useRef<HTMLInputElement>(null)
+
+  // Auto-focus the input when it enters edit mode
+  useEffect(() => {
+    if (apiKeyFocused && apiKeyInputRef.current) {
+      apiKeyInputRef.current.focus()
+    }
+  }, [apiKeyFocused])
 
   const toggleModel = (model: string) => {
     setSelectedModels((prev) =>
       prev.includes(model) ? prev.filter((m) => m !== model) : [...prev, model]
     )
   }
+
+  const filteredModels = modelFilter.trim()
+    ? MODEL_OPTIONS.filter(
+        (m) =>
+          m.title.toLowerCase().includes(modelFilter.toLowerCase()) ||
+          m.id.toLowerCase().includes(modelFilter.toLowerCase()) ||
+          m.provider.toLowerCase().includes(modelFilter.toLowerCase())
+      )
+    : MODEL_OPTIONS
 
   const selectedProtocolLabel = t(PROTOCOL_OPTIONS.find((o) => o.value === protocol)?.key ?? 'Custom')
 
@@ -86,6 +115,13 @@ export function FreeApiKeySubmitForm() {
   }
 
   const handleSubmit = async () => {
+    if (!isAuthed) {
+      navigate({
+        to: '/sign-in',
+        search: { redirect: '/free-tokens/share' },
+      })
+      return
+    }
     if (!validate()) return
     const payload: FreeApiKeySubmitPayload = {
       api_address: apiAddress.trim(),
@@ -99,8 +135,6 @@ export function FreeApiKeySubmitForm() {
       if (result.success) {
         toast.success(t('API Key submitted successfully'))
         navigate({ to: '/free-tokens/api-keys' })
-      } else {
-        toast.error(result.message || t('Submission failed'))
       }
     } catch {
       toast.error(t('Submission failed'))
@@ -195,13 +229,37 @@ export function FreeApiKeySubmitForm() {
           <label className='text-sm font-medium'>
             {t('API Key')} <span className='text-destructive'>*</span>
           </label>
-          <Input
-            type='password'
-            value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
-            placeholder='sk-...'
-            className='mt-2'
-          />
+          <div className='mt-2'>
+            {apiKeyFocused || !apiKey ? (
+              <Input
+                ref={apiKeyInputRef}
+                type='text'
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                onFocus={() => setApiKeyFocused(true)}
+                onBlur={() => setApiKeyFocused(false)}
+                placeholder='sk-...'
+              />
+            ) : (
+              <div
+                className='border-input h-8 w-full min-w-0 rounded-lg border bg-transparent px-2.5 py-1 text-sm font-mono cursor-text flex items-center select-none'
+                onMouseDown={(e) => {
+                  e.preventDefault()
+                  setApiKeyFocused(true)
+                }}
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    setApiKeyFocused(true)
+                  }
+                }}
+                role='textbox'
+              >
+                <span className='truncate'>{maskApiKey(apiKey)}</span>
+              </div>
+            )}
+          </div>
           {errors.apiKey && (
             <p className='text-destructive mt-1.5 text-xs'>{errors.apiKey}</p>
           )}
@@ -211,19 +269,70 @@ export function FreeApiKeySubmitForm() {
         <div>
           <label className='text-sm font-medium'>
             {t('Supported Models')} <span className='text-destructive'>*</span>
+            {selectedModels.length > 0 && (
+              <span className='text-muted-foreground ml-1 font-normal'>
+                ({selectedModels.length} {t('selected')})
+              </span>
+            )}
           </label>
-          <div className='mt-2 flex flex-wrap gap-1.5'>
-            {COMMON_MODELS.map((model) => (
-              <Badge
-                key={model}
-                variant={selectedModels.includes(model) ? 'default' : 'outline'}
-                className='cursor-pointer'
-                onClick={() => toggleModel(model)}
+          <div className='mt-2 space-y-2'>
+            <Input
+              value={modelFilter}
+              onChange={(e) => setModelFilter(e.target.value)}
+              placeholder={t('Filter models...') as string}
+              className='h-8 text-sm'
+            />
+            <div className='max-h-64 overflow-y-auto rounded-lg border'>
+              {filteredModels.map((model: ModelOption) => (
+              <div
+                key={model.id}
+                role='checkbox'
+                aria-checked={selectedModels.includes(model.id)}
+                tabIndex={0}
+                className='hover:bg-accent flex cursor-pointer items-start gap-2.5 border-b px-3 py-2 text-sm last:border-b-0 transition-colors'
+                onClick={() => toggleModel(model.id)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    toggleModel(model.id)
+                  }
+                }}
               >
-                {model}
-              </Badge>
-            ))}
+                <Checkbox
+                  checked={selectedModels.includes(model.id)}
+                  onCheckedChange={() => toggleModel(model.id)}
+                  className='mt-0.5 shrink-0 pointer-events-none'
+                />
+                <div className='min-w-0'>
+                  <div className='truncate font-medium'>{model.title}</div>
+                  <div className='text-muted-foreground truncate text-xs'>
+                    {model.id} · {model.provider}
+                  </div>
+                </div>
+              </div>
+              ))}
+              {filteredModels.length === 0 && (
+                <p className='text-muted-foreground py-4 text-center text-sm'>
+                  {t('No models match your search')}
+                </p>
+              )}
           </div>
+          </div>
+          {selectedModels.length > 0 && (
+            <div className='mt-2 flex flex-wrap gap-1'>
+              {selectedModels.map((id) => (
+                <Badge
+                  key={id}
+                  variant='secondary'
+                  className='gap-1 cursor-pointer'
+                  onClick={() => toggleModel(id)}
+                >
+                  {MODEL_OPTIONS.find((m) => m.id === id)?.title ?? id}
+                  <X className='h-3 w-3' />
+                </Badge>
+              ))}
+              </div>
+          )}
           <div className='mt-2 flex gap-2'>
             <Input
               value={customModel}
@@ -247,19 +356,6 @@ export function FreeApiKeySubmitForm() {
               {t('Add')}
             </Button>
           </div>
-          {selectedModels.length > 0 && (
-            <div className='mt-2 flex flex-wrap gap-1'>
-              {selectedModels.map((model) => (
-                <Badge key={model} variant='secondary' className='gap-1'>
-                  {model}
-                  <X
-                    className='h-3 w-3 cursor-pointer'
-                    onClick={() => toggleModel(model)}
-                  />
-                </Badge>
-              ))}
-            </div>
-          )}
           {errors.models && (
             <p className='text-destructive mt-1.5 text-xs'>{errors.models}</p>
           )}
@@ -290,7 +386,7 @@ export function FreeApiKeySubmitForm() {
           disabled={mutation.isPending}
           onClick={handleSubmit}
         >
-          {mutation.isPending ? t('Submitting...') : t('Submit')}
+          {mutation.isPending ? t('Checking...') : t('Check & Submit')}
         </Button>
       </div>
     </div>

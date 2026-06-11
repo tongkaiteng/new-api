@@ -18,7 +18,7 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import { useMemo, useState, useCallback, useRef } from 'react'
 import { Link, useRouterState } from '@tanstack/react-router'
-import { Menu } from 'lucide-react'
+import { Menu, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -213,6 +213,10 @@ export function TopNav({ className, links, ...props }: TopNavProps) {
           if (children && children.length > 0) {
             const key = `${title}-${href}`
             const isOpen = hoveredKey === key
+            const parentActive =
+              pathname === href ||
+              pathname.startsWith(href + '/') ||
+              children.some((c) => pathname === c.href)
             return (
               <div
                 key={key}
@@ -231,13 +235,16 @@ export function TopNav({ className, links, ...props }: TopNavProps) {
                       <button
                         disabled={disabled}
                         className={cn(
-                          'relative text-sm font-medium transition-colors',
+                          'relative inline-flex items-center gap-1 text-sm font-medium transition-colors',
                           'hover:text-primary',
-                          isActive ? 'text-foreground' : 'text-muted-foreground',
+                          parentActive
+                            ? 'bg-accent text-accent-foreground rounded-md px-2 py-1'
+                            : 'text-muted-foreground',
                           disabled && 'pointer-events-none opacity-50'
                         )}
                       >
                         {title}
+                        <ChevronDown className='h-3 w-3 opacity-50' />
                         {link.badge && (
                           <span className='absolute -top-1.5 -right-3.5 inline-flex items-center rounded bg-emerald-500 px-1 py-px text-[9px] font-semibold leading-none text-white'>
                             {link.badge}
@@ -314,7 +321,7 @@ export function TopNav({ className, links, ...props }: TopNavProps) {
               href={href}
               target='_blank'
               rel='noopener noreferrer'
-              className={`hover:text-primary text-sm font-medium transition-colors ${isActive ? '' : 'text-muted-foreground'}`}
+              className={`hover:text-primary text-sm font-medium transition-colors ${isActive ? 'bg-accent text-accent-foreground rounded-md px-2 py-1' : 'text-muted-foreground'}`}
             >
               {title}
             </a>
@@ -323,7 +330,7 @@ export function TopNav({ className, links, ...props }: TopNavProps) {
               key={`${title}-${href}`}
               to={href}
               disabled={disabled}
-              className={`hover:text-primary text-sm font-medium transition-colors ${isActive ? '' : 'text-muted-foreground'}`}
+              className={`hover:text-primary text-sm font-medium transition-colors ${isActive ? 'bg-accent text-accent-foreground rounded-md px-2 py-1' : 'text-muted-foreground'}`}
             >
               {title}
             </Link>

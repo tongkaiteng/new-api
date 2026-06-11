@@ -1807,6 +1807,8 @@
     "Free: {{free}} / Total: {{total}}": "可用空间: {{free}} / 总空间: {{total}}",
     "Free API Key": "免费API Key",
     "Free Redeem Code": "免费兑换码",
+    "Get Redeem Code": "获得兑换码",
+    "Get Free Community Tokens": "免费领取社区token",
     "Free Token": "免费Token",
     "Free Tokens": "免费额度",
     "Free Token Sites": "免费额度站点",
@@ -2726,6 +2728,7 @@
     "Not Started": "未开始",
     "Not Submitted": "未提交",
     "Not tested": "未测试",
+    "Note": "备注",
     "Not used for upstream training by default": "默认不会用于上游训练",
     "Not used yet": "暂未使用",
     "Notice": "通知",
@@ -4628,6 +4631,7 @@
     "Protocol Format": "协议格式",
     "Search API keys...": "搜索 API Key...",
     "Share Token": "分享Token",
+    "Share Token to Earn Quota": "分享Token可获得额度",
     "Share your API Key and earn quota rewards when others claim it.": "分享您的 API Key，他人领取时您可获得配额奖励。",
     "Shared by": "分享者",
     "Submit API Key": "提交 API Key",
@@ -4643,6 +4647,8 @@
     "Compatible with /v1/chat/completions and /v1/models proxy endpoints.": "兼容 /v1/chat/completions、/v1/models 的中转站。",
     "Compatible with /v1/messages, using the Anthropic Message protocol.": "兼容 /v1/messages，使用 Anthropic Message 协议。",
     "Compatible with /v1beta/models/{model}:generateContent.": "兼容 /v1beta/models/{model}:generateContent。",
-    "Only select this when the API does not match any of the above three types.": "仅在接口不是以上三种类型时选择。"
+    "Only select this when the API does not match any of the above three types.": "仅在接口不是以上三种类型时选择。",
+    "Check & Submit": "检测并提交",
+    "Checking...": "检测中..."
   }
 }

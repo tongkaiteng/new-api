@@ -1,0 +1,107 @@
+Gemini 3.5 Flash
+gemini-3.5-flash · Google
+
+GPT Image 2
+gpt-image-2 · OpenAI
+
+Gemini 3.1 Pro Preview
+gemini-3.1-pro · Google
+
+Qwen3.7 Max
+qwen3.7-max · Alibaba
+
+Gemini 3.1 Pro
+gemini-3.1-pro-preview · Google
+
+DeepSeek V4 Pro
+deepseek-v4-pro · DeepSeek
+
+DeepSeek V4 Flash
+deepseek-v4-flash · DeepSeek
+
+GLM 5.1
+glm-5.1 · 智谱
+
+Kimi 2.6
+kimi-k2.6 · Moonshot AI
+
+MiniMax M2.7
+minimax-m2.7 · MiniMax
+
+Seedance 2.0
+doubao-seedance-2-0-260128 · ByteDance
+
+happyhorse-1.0
+happyhorse-1.0 · Alibaba-ATH
+
+NanoBanana 2
+gemini-3.1-flash-image-preview · Google
+
+seedance-2.0
+seedance-2.0 · Bytedance
+
+veo-3.1-audio
+veo-3.1-audio · Google
+
+Claude Opus 4.6
+claude-opus-4-6 · Anthropic
+
+Claude Opus 4.7
+claude-opus-4-7 · Anthropic
+
+Claude Opus 4.8
+claude-opus-4-8 · Anthropic
+
+Claude Sonnet 4.6
+claude-sonnet-4-6 · Anthropic
+
+GPT 5.4
+gpt-5.4 · OpenAI
+
+GPT 5.5
+gpt-5.5 · OpenAI
+
+Claude Fable 5
+claude-fable-5 · Anthropic
+
+gemini-3.1-flash-image-preview (nano-banana-2)
+gemini-3.1-flash-image-preview-nano-banana-2 · Google
+
+gemini-3-pro-image-preview-2k (nano-banana-pro)
+gemini-3-pro-image-preview-2k-nano-banana-pro · Google
+
+gemini-3-pro-image-preview (nano-banana-pro)
+gemini-3-pro-image-preview-nano-banana-pro · Google
+
+grok-imagine-image
+grok-imagine-image · xAI
+
+grok-video-3
+grok-video-3 · xAI
+
+mimo-v2.5
+mimo-v2.5 · Xiaomi
+
+mimo-v2.5-pro
+mimo-v2.5-pro · Xiaomi
+
+MiniMax M3
+minimax-m3 · MiniMax
+
+Qwen3.6 Max
+qwen3.6-max-preview · Alibaba
+
+Qwen3.6 plus
+qwen3.6-plus · Alibaba
+
+seedance-1.5-pro
+seedance-1.5-pro · Bytedance
+
+veo-3.1-audio-1080p
+veo-3.1-audio-1080p · Google
+
+veo-3.1-fast-audio
+veo-3.1-fast-audio · Google
+
+Seedance 2.0 Fast
+doubao-seedance-2-0-fast · ByteDance

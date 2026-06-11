@@ -65,43 +65,39 @@ export function FreeTokenClaimsSection(props: FreeTokenClaimsSectionProps) {
               <TableHead>{t('Bonus label')}</TableHead>
               <TableHead>{t('Code')}</TableHead>
               <TableHead>{t('Claimed at')}</TableHead>
-              <TableHead className='text-right'>{t('Actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {claims.map((claim) => (
               <TableRow key={claim.id}>
-                <TableCell className='font-medium'>{claim.site_name}</TableCell>
+                <TableCell className='font-medium'>
+                  <span className='mr-2'>{claim.site_name}</span>
+                  {claim.site_url ? (
+                      <Button type='button' variant='outline' size='sm' asChild>
+                        <a
+                          href={claim.site_url}
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          title={`打开站点：${claim.site_name}`}
+                        >
+                          <ExternalLink className='ml-1.5 h-3.5 w-3.5' />
+                        </a>
+                      </Button>
+                    ) : null}
+                </TableCell>
                 <TableCell>{claim.bonus || '—'}</TableCell>
                 <TableCell>
                   <code className='text-sm'>{claim.code}</code>
-                </TableCell>
-                <TableCell>{formatTimestamp(claim.claimed_time)}</TableCell>
-                <TableCell className='text-right'>
-                  <div className='flex justify-end gap-2'>
-                    <Button
+                  <Button
                       type='button'
                       variant='ghost'
                       size='sm'
                       onClick={() => handleCopyCode(claim.code)}
                     >
                       <Copy className='mr-1.5 h-3.5 w-3.5' />
-                      {t('Copy')}
                     </Button>
-                    {claim.site_url ? (
-                      <Button type='button' variant='outline' size='sm' asChild>
-                        <a
-                          href={claim.site_url}
-                          target='_blank'
-                          rel='noopener noreferrer'
-                        >
-                          {t('Visit site')}
-                          <ExternalLink className='ml-1.5 h-3.5 w-3.5' />
-                        </a>
-                      </Button>
-                    ) : null}
-                  </div>
                 </TableCell>
+                <TableCell>{formatTimestamp(claim.claimed_time)}</TableCell>
               </TableRow>
             ))}
           </TableBody>

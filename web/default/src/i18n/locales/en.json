@@ -1807,6 +1807,8 @@
     "Free: {{free}} / Total: {{total}}": "Free: {{free}} / Total: {{total}}",
     "Free API Key": "Free API Key",
     "Free Redeem Code": "Free Redeem Code",
+    "Get Redeem Code": "Get Redeem Code",
+    "Get Free Community Tokens": "Get Free Community Tokens",
     "Free Token": "Free Token",
     "Free Tokens": "Free Tokens",
     "Free Token Sites": "Free Token Sites",
@@ -4628,6 +4630,7 @@
     "Protocol Format": "Protocol Format",
     "Search API keys...": "Search API keys...",
     "Share Token": "Share Token",
+    "Share Token to Earn Quota": "Share Token to Earn Quota",
     "Share your API Key and earn quota rewards when others claim it.": "Share your API Key and earn quota rewards when others claim it.",
     "Shared by": "Shared by",
     "Submit API Key": "Submit API Key",
@@ -4643,6 +4646,8 @@
     "Compatible with /v1/chat/completions and /v1/models proxy endpoints.": "Compatible with /v1/chat/completions and /v1/models proxy endpoints.",
     "Compatible with /v1/messages, using the Anthropic Message protocol.": "Compatible with /v1/messages, using the Anthropic Message protocol.",
     "Compatible with /v1beta/models/{model}:generateContent.": "Compatible with /v1beta/models/{model}:generateContent.",
-    "Only select this when the API does not match any of the above three types.": "Only select this when the API does not match any of the above three types."
+    "Only select this when the API does not match any of the above three types.": "Only select this when the API does not match any of the above three types.",
+    "Check & Submit": "Check & Submit",
+    "Checking...": "Checking..."
   }
 }

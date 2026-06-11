@@ -13,6 +13,10 @@ const (
 	FreeApiKeyProtocolAnthropic = 2
 	FreeApiKeyProtocolGemini    = 3
 	FreeApiKeyProtocolCustom    = 4
+
+	FreeApiKeyStatusUntested    = 0
+	FreeApiKeyStatusAvailable   = 1
+	FreeApiKeyStatusUnavailable = 2
 )
 
 type FreeTokenApiKey struct {
@@ -24,6 +28,8 @@ type FreeTokenApiKey struct {
 	Models      string         `json:"models"`
 	Note        string         `json:"note"`
 	ClaimCount  int            `json:"claim_count" gorm:"default:0"`
+	Status      int            `json:"status" gorm:"default:0"`
+	TestTime    int64          `json:"test_time" gorm:"bigint;default:0"`
 	CreatedTime int64          `json:"created_time" gorm:"bigint"`
 	UpdatedTime int64          `json:"updated_time" gorm:"bigint"`
 	DeletedAt   gorm.DeletedAt `json:"-" gorm:"index"`
@@ -41,6 +47,7 @@ type FreeTokenApiKeyPublic struct {
 	ClaimCount  int    `json:"claim_count" gorm:"column:claim_count"`
 	ClaimCost   int    `json:"claim_cost"`
 	Claimed     bool   `json:"claimed"`
+	Status      int    `json:"status" gorm:"column:status"`
 	ClaimedTime int64  `json:"claimed_time" gorm:"column:claimed_time"`
 	CreatedTime int64  `json:"created_time" gorm:"column:created_time"`
 }
@@ -75,6 +82,12 @@ func (ak *FreeTokenApiKey) Insert() error {
 	}
 	ak.UpdatedTime = now
 	return DB.Create(ak).Error
+}
+
+func IsFreeApiKeyAlreadyShared(apiKey string) (bool, error) {
+	var count int64
+	err := DB.Model(&FreeTokenApiKey{}).Where("api_key = ?", apiKey).Count(&count).Error
+	return count > 0, err
 }
 
 func GetFreeTokenApiKeysPublic(page, pageSize int, keyword string, protocol int, userId int) ([]*FreeTokenApiKeyPublic, int64, error) {
