@@ -104,6 +104,17 @@ export function FreeApiKeyTable() {
     return opt ? t(opt.key) : t('Custom')
   }
 
+  const STATUS_CONFIG: Record<number, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
+    0: { label: t('Untested'), variant: 'secondary' },
+    1: { label: t('Available'), variant: 'default' },
+    2: { label: t('Unavailable'), variant: 'destructive' },
+  }
+
+  const getStatusLabel = (status: number | undefined) => {
+    const cfg = STATUS_CONFIG[status ?? 0] ?? STATUS_CONFIG[0]
+    return <Badge variant={cfg.variant} className='text-xs'>{cfg.label}</Badge>
+  }
+
   const selectedProtocolLabel = protocol === 0 ? t('All') : getProtocolLabel(protocol)
 
   const handleClaim = async (item: FreeApiKey) => {
@@ -192,6 +203,7 @@ export function FreeApiKeyTable() {
               <TableHead>{t('Protocol Format')}</TableHead>
               <TableHead>{t('API Key')}</TableHead>
               <TableHead>{t('Supported Models')}</TableHead>
+              <TableHead>{t('Status')}</TableHead>
               <TableHead>{t('Shared by')}</TableHead>
               <TableHead className='text-right'>{t('Actions')}</TableHead>
             </TableRow>
@@ -200,14 +212,14 @@ export function FreeApiKeyTable() {
             {isLoading ? (
               Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={i}>
-                  <TableCell colSpan={6}>
+                  <TableCell colSpan={7}>
                     <Skeleton className='h-8 w-full' />
                   </TableCell>
                 </TableRow>
               ))
             ) : items.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className='text-muted-foreground text-center'>
+                <TableCell colSpan={7} className='text-muted-foreground text-center'>
                   {t('No API keys found')}
                 </TableCell>
               </TableRow>
@@ -231,6 +243,9 @@ export function FreeApiKeyTable() {
                     </TableCell>
                     <TableCell className='max-w-[140px] truncate text-xs'>
                       {item.models}
+                    </TableCell>
+                    <TableCell>
+                      {getStatusLabel(item.status)}
                     </TableCell>
                     <TableCell className='text-sm'>{item.username}</TableCell>
                     <TableCell className='text-right'>

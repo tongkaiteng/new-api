@@ -96,7 +96,7 @@ func GetFreeTokenApiKeysPublic(page, pageSize int, keyword string, protocol int,
 
 	baseQuery := DB.Table("free_token_api_keys AS a").
 		Select(`a.id, a.user_id, u.username, a.api_address, a.protocol, a.api_key,
-			a.models, a.note, a.claim_count, a.created_time`).
+			a.models, a.note, a.claim_count, a.status, a.test_time, a.created_time`).
 		Joins("LEFT JOIN users AS u ON u.id = a.user_id")
 
 	if keyword != "" {
@@ -165,7 +165,7 @@ func GetUserClaimedFreeApiKeys(userId int) ([]*FreeTokenApiKeyPublic, error) {
 	var items []*FreeTokenApiKeyPublic
 	err := DB.Table("free_token_api_key_claims AS c").
 		Select(`a.id, a.user_id, u.username, a.api_address, a.protocol, a.api_key,
-			a.models, a.note, a.claim_count, a.created_time, c.claimed_time`).
+			a.models, a.note, a.claim_count, a.status, a.test_time, a.created_time, c.claimed_time`).
 		Joins("LEFT JOIN free_token_api_keys AS a ON a.id = c.api_key_id").
 		Joins("LEFT JOIN users AS u ON u.id = a.user_id").
 		Where("c.user_id = ?", userId).
