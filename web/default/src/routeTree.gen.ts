@@ -51,6 +51,7 @@ import { Route as AuthenticatedPlaygroundIndexRouteImport } from './routes/_auth
 import { Route as AuthenticatedModelsIndexRouteImport } from './routes/_authenticated/models/index'
 import { Route as AuthenticatedKeysIndexRouteImport } from './routes/_authenticated/keys/index'
 import { Route as AuthenticatedFreeTokenSitesIndexRouteImport } from './routes/_authenticated/free-token-sites/index'
+import { Route as AuthenticatedFreeApiKeysIndexRouteImport } from './routes/_authenticated/free-api-keys/index'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
 import { Route as AuthenticatedChannelsIndexRouteImport } from './routes/_authenticated/channels/index'
 import { Route as AuthenticatedUsageLogsSectionRouteImport } from './routes/_authenticated/usage-logs/$section'
@@ -292,6 +293,12 @@ const AuthenticatedFreeTokenSitesIndexRoute =
     path: '/free-token-sites/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedFreeApiKeysIndexRoute =
+  AuthenticatedFreeApiKeysIndexRouteImport.update({
+    id: '/free-api-keys/',
+    path: '/free-api-keys/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedDashboardIndexRoute =
   AuthenticatedDashboardIndexRouteImport.update({
     id: '/dashboard/',
@@ -460,6 +467,7 @@ export interface FileRoutesByFullPath {
   '/usage-logs/$section': typeof AuthenticatedUsageLogsSectionRoute
   '/channels/': typeof AuthenticatedChannelsIndexRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/free-api-keys/': typeof AuthenticatedFreeApiKeysIndexRoute
   '/free-token-sites/': typeof AuthenticatedFreeTokenSitesIndexRoute
   '/keys/': typeof AuthenticatedKeysIndexRoute
   '/models/': typeof AuthenticatedModelsIndexRoute
@@ -523,6 +531,7 @@ export interface FileRoutesByTo {
   '/usage-logs/$section': typeof AuthenticatedUsageLogsSectionRoute
   '/channels': typeof AuthenticatedChannelsIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
+  '/free-api-keys': typeof AuthenticatedFreeApiKeysIndexRoute
   '/free-token-sites': typeof AuthenticatedFreeTokenSitesIndexRoute
   '/keys': typeof AuthenticatedKeysIndexRoute
   '/models': typeof AuthenticatedModelsIndexRoute
@@ -590,6 +599,7 @@ export interface FileRoutesById {
   '/_authenticated/usage-logs/$section': typeof AuthenticatedUsageLogsSectionRoute
   '/_authenticated/channels/': typeof AuthenticatedChannelsIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/_authenticated/free-api-keys/': typeof AuthenticatedFreeApiKeysIndexRoute
   '/_authenticated/free-token-sites/': typeof AuthenticatedFreeTokenSitesIndexRoute
   '/_authenticated/keys/': typeof AuthenticatedKeysIndexRoute
   '/_authenticated/models/': typeof AuthenticatedModelsIndexRoute
@@ -656,6 +666,7 @@ export interface FileRouteTypes {
     | '/usage-logs/$section'
     | '/channels/'
     | '/dashboard/'
+    | '/free-api-keys/'
     | '/free-token-sites/'
     | '/keys/'
     | '/models/'
@@ -719,6 +730,7 @@ export interface FileRouteTypes {
     | '/usage-logs/$section'
     | '/channels'
     | '/dashboard'
+    | '/free-api-keys'
     | '/free-token-sites'
     | '/keys'
     | '/models'
@@ -785,6 +797,7 @@ export interface FileRouteTypes {
     | '/_authenticated/usage-logs/$section'
     | '/_authenticated/channels/'
     | '/_authenticated/dashboard/'
+    | '/_authenticated/free-api-keys/'
     | '/_authenticated/free-token-sites/'
     | '/_authenticated/keys/'
     | '/_authenticated/models/'
@@ -1134,6 +1147,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFreeTokenSitesIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/free-api-keys/': {
+      id: '/_authenticated/free-api-keys/'
+      path: '/free-api-keys'
+      fullPath: '/free-api-keys/'
+      preLoaderRoute: typeof AuthenticatedFreeApiKeysIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard/': {
       id: '/_authenticated/dashboard/'
       path: '/dashboard'
@@ -1384,6 +1404,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedUsageLogsSectionRoute: typeof AuthenticatedUsageLogsSectionRoute
   AuthenticatedChannelsIndexRoute: typeof AuthenticatedChannelsIndexRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
+  AuthenticatedFreeApiKeysIndexRoute: typeof AuthenticatedFreeApiKeysIndexRoute
   AuthenticatedFreeTokenSitesIndexRoute: typeof AuthenticatedFreeTokenSitesIndexRoute
   AuthenticatedKeysIndexRoute: typeof AuthenticatedKeysIndexRoute
   AuthenticatedModelsIndexRoute: typeof AuthenticatedModelsIndexRoute
@@ -1407,6 +1428,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedUsageLogsSectionRoute: AuthenticatedUsageLogsSectionRoute,
   AuthenticatedChannelsIndexRoute: AuthenticatedChannelsIndexRoute,
   AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
+  AuthenticatedFreeApiKeysIndexRoute: AuthenticatedFreeApiKeysIndexRoute,
   AuthenticatedFreeTokenSitesIndexRoute: AuthenticatedFreeTokenSitesIndexRoute,
   AuthenticatedKeysIndexRoute: AuthenticatedKeysIndexRoute,
   AuthenticatedModelsIndexRoute: AuthenticatedModelsIndexRoute,

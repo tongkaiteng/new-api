@@ -143,6 +143,11 @@ export function useSidebarData(): SidebarData {
             icon: Gift,
           },
           {
+            title: t('Free API Keys'),
+            url: '/free-api-keys',
+            icon: Key,
+          },
+          {
             title: t('Subscription Management'),
             url: '/subscriptions',
             icon: CreditCard,

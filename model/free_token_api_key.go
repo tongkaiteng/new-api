@@ -59,6 +59,22 @@ type FreeTokenApiKeyClaim struct {
 	ClaimedTime int64 `json:"claimed_time" gorm:"bigint"`
 }
 
+type FreeTokenApiKeyAdmin struct {
+	Id          int    `json:"id" gorm:"column:id"`
+	UserId      int    `json:"user_id" gorm:"column:user_id"`
+	Username    string `json:"username" gorm:"column:username"`
+	ApiAddress  string `json:"api_address" gorm:"column:api_address"`
+	Protocol    int    `json:"protocol" gorm:"column:protocol"`
+	ApiKey      string `json:"api_key" gorm:"column:api_key"`
+	Models      string `json:"models" gorm:"column:models"`
+	Note        string `json:"note" gorm:"column:note"`
+	ClaimCount  int    `json:"claim_count" gorm:"column:claim_count"`
+	Status      int    `json:"status" gorm:"column:status"`
+	TestTime    int64  `json:"test_time" gorm:"column:test_time"`
+	CreatedTime int64  `json:"created_time" gorm:"column:created_time"`
+	UpdatedTime int64  `json:"updated_time" gorm:"column:updated_time"`
+}
+
 var (
 	ErrFreeApiKeyNotFound       = errors.New("api key not found")
 	ErrFreeApiKeyOwnSubmission  = errors.New("cannot claim your own submission")
@@ -262,4 +278,59 @@ func ClaimFreeTokenApiKey(userId, apiKeyId int) (*FreeTokenApiKeyPublic, error) 
 		return nil, err
 	}
 	return result, nil
+}
+
+func GetAllFreeApiKeysAdmin(startIdx, pageSize int, keyword string, protocol int, status int) ([]*FreeTokenApiKeyAdmin, int64, error) {
+	var items []*FreeTokenApiKeyAdmin
+	var total int64
+
+	baseQuery := DB.Table("free_token_api_keys AS a").
+		Select(`a.id, a.user_id, u.username, a.api_address, a.protocol, a.api_key,
+			a.models, a.note, a.claim_count, a.status, a.test_time, a.created_time, a.updated_time`).
+		Joins("LEFT JOIN users AS u ON u.id = a.user_id")
+
+	if keyword != "" {
+		kw := "%" + keyword + "%"
+		baseQuery = baseQuery.Where(
+			"a.api_address LIKE ? OR a.models LIKE ? OR a.note LIKE ? OR u.username LIKE ?",
+			kw, kw, kw, kw,
+		)
+	}
+
+	if protocol > 0 {
+		baseQuery = baseQuery.Where("a.protocol = ?", protocol)
+	}
+
+	if status >= 0 {
+		baseQuery = baseQuery.Where("a.status = ?", status)
+	}
+
+	if err := baseQuery.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	err := baseQuery.Order("a.id desc").
+		Limit(pageSize).Offset(startIdx).
+		Scan(&items).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return items, total, nil
+}
+
+func UpdateFreeApiKeyStatus(id int, status int) error {
+	return DB.Model(&FreeTokenApiKey{}).Where("id = ?", id).Updates(map[string]any{
+		"status":       status,
+		"updated_time": common.GetTimestamp(),
+	}).Error
+}
+
+func DeleteFreeApiKeyById(id int) error {
+	return DB.Where("id = ?", id).Delete(&FreeTokenApiKey{}).Error
+}
+
+func DeleteFreeApiKeysByStatus(status int) (int64, error) {
+	result := DB.Where("status = ?", status).Delete(&FreeTokenApiKey{})
+	return result.RowsAffected, result.Error
 }

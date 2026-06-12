@@ -380,3 +380,88 @@ func ClaimFreeApiKey(c *gin.Context) {
 
 	common.ApiSuccess(c, result)
 }
+
+func AdminGetFreeApiKeys(c *gin.Context) {
+	page, _ := strconv.Atoi(c.DefaultQuery("p", "1"))
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("page_size", "20"))
+	keyword := c.Query("keyword")
+	protocol, _ := strconv.Atoi(c.DefaultQuery("protocol", "0"))
+	status, _ := strconv.Atoi(c.DefaultQuery("status", "-1"))
+
+	if page < 1 {
+		page = 1
+	}
+	if pageSize < 1 || pageSize > 100 {
+		pageSize = 20
+	}
+
+	items, total, err := model.GetAllFreeApiKeysAdmin((page-1)*pageSize, pageSize, keyword, protocol, status)
+	if err != nil {
+		common.ApiError(c, err)
+		return
+	}
+	if items == nil {
+		items = []*model.FreeTokenApiKeyAdmin{}
+	}
+
+	common.ApiSuccess(c, gin.H{
+		"items":     items,
+		"total":     total,
+		"page":      page,
+		"page_size": pageSize,
+	})
+}
+
+func AdminGetFreeApiKey(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		common.ApiError(c, err)
+		return
+	}
+	ak, err := model.GetFreeTokenApiKeyById(id)
+	if err != nil {
+		common.ApiError(c, err)
+		return
+	}
+	common.ApiSuccess(c, ak)
+}
+
+type adminUpdateFreeApiKeyPayload struct {
+	Id     int `json:"id"`
+	Status int `json:"status"`
+}
+
+func AdminUpdateFreeApiKey(c *gin.Context) {
+	var payload adminUpdateFreeApiKeyPayload
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		common.ApiError(c, err)
+		return
+	}
+	if err := model.UpdateFreeApiKeyStatus(payload.Id, payload.Status); err != nil {
+		common.ApiError(c, err)
+		return
+	}
+	common.ApiSuccess(c, nil)
+}
+
+func AdminDeleteFreeApiKey(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		common.ApiError(c, err)
+		return
+	}
+	if err := model.DeleteFreeApiKeyById(id); err != nil {
+		common.ApiError(c, err)
+		return
+	}
+	common.ApiSuccess(c, nil)
+}
+
+func AdminDeleteInvalidFreeApiKeys(c *gin.Context) {
+	count, err := model.DeleteFreeApiKeysByStatus(model.FreeApiKeyStatusUnavailable)
+	if err != nil {
+		common.ApiError(c, err)
+		return
+	}
+	common.ApiSuccess(c, gin.H{"deleted": count})
+}
