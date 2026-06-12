@@ -17,22 +17,25 @@ const (
 	FreeApiKeyStatusUntested    = 0
 	FreeApiKeyStatusAvailable   = 1
 	FreeApiKeyStatusUnavailable = 2
+
+	FreeApiKeyMaxConsecutiveFailures = 5
 )
 
 type FreeTokenApiKey struct {
-	Id          int            `json:"id"`
-	UserId      int            `json:"user_id" gorm:"index"`
-	ApiAddress  string         `json:"api_address"`
-	Protocol    int            `json:"protocol" gorm:"default:1"`
-	ApiKey      string         `json:"api_key"`
-	Models      string         `json:"models"`
-	Note        string         `json:"note"`
-	ClaimCount  int            `json:"claim_count" gorm:"default:0"`
-	Status      int            `json:"status" gorm:"default:0"`
-	TestTime    int64          `json:"test_time" gorm:"bigint;default:0"`
-	CreatedTime int64          `json:"created_time" gorm:"bigint"`
-	UpdatedTime int64          `json:"updated_time" gorm:"bigint"`
-	DeletedAt   gorm.DeletedAt `json:"-" gorm:"index"`
+	Id                 int            `json:"id"`
+	UserId             int            `json:"user_id" gorm:"index"`
+	ApiAddress         string         `json:"api_address"`
+	Protocol           int            `json:"protocol" gorm:"default:1"`
+	ApiKey             string         `json:"api_key"`
+	Models             string         `json:"models"`
+	Note               string         `json:"note"`
+	ClaimCount         int            `json:"claim_count" gorm:"default:0"`
+	Status             int            `json:"status" gorm:"default:0"`
+	ConsecutiveFailures int           `json:"consecutive_failures" gorm:"default:0"`
+	TestTime           int64          `json:"test_time" gorm:"bigint;default:0"`
+	CreatedTime        int64          `json:"created_time" gorm:"bigint"`
+	UpdatedTime        int64          `json:"updated_time" gorm:"bigint"`
+	DeletedAt          gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
 type FreeTokenApiKeyPublic struct {
@@ -333,4 +336,27 @@ func DeleteFreeApiKeyById(id int) error {
 func DeleteFreeApiKeysByStatus(status int) (int64, error) {
 	result := DB.Where("status = ?", status).Delete(&FreeTokenApiKey{})
 	return result.RowsAffected, result.Error
+}
+
+func GetFreeApiKeysForTesting() ([]*FreeTokenApiKey, error) {
+	var keys []*FreeTokenApiKey
+	err := DB.Where("protocol != ?", FreeApiKeyProtocolCustom).
+		Where("consecutive_failures < ?", FreeApiKeyMaxConsecutiveFailures).
+		Find(&keys).Error
+	return keys, err
+}
+
+func UpdateFreeApiKeyTestResult(id int, success bool) error {
+	updates := map[string]any{
+		"test_time":    common.GetTimestamp(),
+		"updated_time": common.GetTimestamp(),
+	}
+	if success {
+		updates["status"] = FreeApiKeyStatusAvailable
+		updates["consecutive_failures"] = 0
+	} else {
+		updates["status"] = FreeApiKeyStatusUnavailable
+		updates["consecutive_failures"] = gorm.Expr("consecutive_failures + 1")
+	}
+	return DB.Model(&FreeTokenApiKey{}).Where("id = ?", id).Updates(updates).Error
 }

@@ -66,3 +66,10 @@ export async function deleteInvalidFreeApiKeys(): Promise<
   const res = await api.delete('/api/free-api-key/invalid')
   return res.data
 }
+
+export async function testFreeApiKey(
+  id: number
+): Promise<ApiResponse<{ status: number; message: string }>> {
+  const res = await api.post(`/api/free-api-key/${id}/test`)
+  return res.data
+}

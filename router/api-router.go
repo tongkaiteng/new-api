@@ -336,6 +336,7 @@ func SetApiRouter(router *gin.Engine) {
 			freeApiKeyAdminRoute.PUT("/", controller.AdminUpdateFreeApiKey)
 			freeApiKeyAdminRoute.DELETE("/invalid", controller.AdminDeleteInvalidFreeApiKeys)
 			freeApiKeyAdminRoute.DELETE("/:id", controller.AdminDeleteFreeApiKey)
+			freeApiKeyAdminRoute.POST("/:id/test", controller.AdminTestFreeApiKey)
 		}
 		logRoute := apiRouter.Group("/log")
 		logRoute.GET("/", middleware.AdminAuth(), controller.GetAllLogs)

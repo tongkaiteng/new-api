@@ -113,6 +113,9 @@ func main() {
 
 	go controller.AutomaticallyTestChannels()
 
+	// Free API key periodic test task (every 3 minutes)
+	go controller.StartFreeApiKeyTestTask()
+
 	// Codex credential auto-refresh check every 10 minutes, refresh when expires within 1 day
 	service.StartCodexCredentialAutoRefreshTask()
 

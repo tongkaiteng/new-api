@@ -17,7 +17,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { type ColumnDef } from '@tanstack/react-table'
-import { Copy, Eye, Trash2, ToggleLeft } from 'lucide-react'
+import { Copy, Eye, FlaskConical, Loader2, Trash2, ToggleLeft } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
@@ -27,11 +27,31 @@ import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard'
 import { formatTimestamp } from '@/lib/format'
 import { FREE_API_KEY_STATUS, PROTOCOL_OPTIONS, type FreeApiKeyAdmin } from '../types'
 import { useFreeApiKeysAdminContext } from './free-api-keys-admin-provider'
+import { useMutation } from '@tanstack/react-query'
+import { testFreeApiKey } from '../api'
 
 export function useFreeApiKeysAdminColumns(): ColumnDef<FreeApiKeyAdmin>[] {
   const { t } = useTranslation()
-  const { setOpen, setCurrentRow } = useFreeApiKeysAdminContext()
+  const { setOpen, setCurrentRow, triggerRefresh } = useFreeApiKeysAdminContext()
   const { copyToClipboard } = useCopyToClipboard()
+
+  const testMutation = useMutation({
+    mutationFn: (id: number) => testFreeApiKey(id),
+    onSuccess: (data) => {
+      if (data.success) {
+        const status = data.data?.status === FREE_API_KEY_STATUS.AVAILABLE
+          ? t('Available')
+          : t('Unavailable')
+        toast.success(`${t('Test')}: ${status}`)
+      } else {
+        toast.error(data.message || t('Test failed'))
+      }
+      triggerRefresh()
+    },
+    onError: () => {
+      toast.error(t('Test failed'))
+    },
+  })
 
   const getProtocolLabel = (protocol: number) => {
     const opt = PROTOCOL_OPTIONS.find((o) => o.value === protocol)
@@ -181,6 +201,19 @@ export function useFreeApiKeysAdminColumns(): ColumnDef<FreeApiKeyAdmin>[] {
       header: t('Actions'),
       cell: ({ row }) => (
         <div className='flex items-center gap-1'>
+          <Button
+            variant='ghost'
+            size='icon'
+            title={t('Test')}
+            disabled={testMutation.isPending}
+            onClick={() => testMutation.mutate(row.original.id)}
+          >
+            {testMutation.isPending ? (
+              <Loader2 className='h-4 w-4 animate-spin' />
+            ) : (
+              <FlaskConical className='h-4 w-4' />
+            )}
+          </Button>
           <Button
             variant='ghost'
             size='icon'

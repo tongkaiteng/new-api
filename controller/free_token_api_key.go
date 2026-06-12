@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/QuantumNous/new-api/common"
@@ -464,4 +466,74 @@ func AdminDeleteInvalidFreeApiKeys(c *gin.Context) {
 		return
 	}
 	common.ApiSuccess(c, gin.H{"deleted": count})
+}
+
+func AdminTestFreeApiKey(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		common.ApiError(c, err)
+		return
+	}
+	ak, err := model.GetFreeTokenApiKeyById(id)
+	if err != nil {
+		common.ApiError(c, err)
+		return
+	}
+
+	if ak.Protocol == model.FreeApiKeyProtocolCustom {
+		c.JSON(http.StatusOK, gin.H{"success": false, "message": "custom protocol cannot be tested"})
+		return
+	}
+
+	firstModel := extractFirstModel(ak.Models)
+	testErr := testFreeApiKeyConnectivity(ak.ApiAddress, ak.Protocol, ak.ApiKey, firstModel)
+	success := testErr == nil
+	if err := model.UpdateFreeApiKeyTestResult(ak.Id, success); err != nil {
+		common.ApiError(c, err)
+		return
+	}
+	if success {
+		common.ApiSuccess(c, gin.H{"status": model.FreeApiKeyStatusAvailable, "message": "available"})
+	} else {
+		common.ApiSuccess(c, gin.H{"status": model.FreeApiKeyStatusUnavailable, "message": testErr.Error()})
+	}
+}
+
+var (
+	freeApiKeyTestOnce    sync.Once
+	freeApiKeyTestRunning atomic.Bool
+)
+
+func StartFreeApiKeyTestTask() {
+	if !common.IsMasterNode {
+		return
+	}
+	freeApiKeyTestOnce.Do(func() {
+		common.SysLog("free api key periodic test task started (interval: 3 minutes)")
+		for {
+			time.Sleep(3 * time.Minute)
+			if freeApiKeyTestRunning.CompareAndSwap(false, true) {
+				common.SysLog("automatically testing free api keys")
+				testAllFreeApiKeys()
+				freeApiKeyTestRunning.Store(false)
+				common.SysLog("automatically free api key test finished")
+			}
+		}
+	})
+}
+
+func testAllFreeApiKeys() {
+	keys, err := model.GetFreeApiKeysForTesting()
+	if err != nil {
+		common.SysLog("failed to get free api keys for testing: " + err.Error())
+		return
+	}
+	for _, key := range keys {
+		firstModel := extractFirstModel(key.Models)
+		testErr := testFreeApiKeyConnectivity(key.ApiAddress, key.Protocol, key.ApiKey, firstModel)
+		success := testErr == nil
+		if err := model.UpdateFreeApiKeyTestResult(key.Id, success); err != nil {
+			common.SysLog(fmt.Sprintf("failed to update test result for free api key %d: %s", key.Id, err.Error()))
+		}
+	}
 }
