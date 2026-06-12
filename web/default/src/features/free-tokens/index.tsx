@@ -19,6 +19,7 @@ For commercial licensing, please contact support@quantumnous.com
 import { useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { Megaphone } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { PublicLayout } from '@/components/layout'
 import { PageTransition } from '@/components/page-transition'
@@ -86,6 +87,14 @@ export function FreeTokens() {
           onSignIn={handleSignIn}
           claimsDefaultTab='codes'
         />
+
+        {/* Promotional banner */}
+        <div className='flex items-center gap-3 rounded-lg border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 px-4 py-3 dark:from-amber-950/30 dark:to-orange-950/30 dark:border-amber-800'>
+          <Megaphone className='h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400' />
+          <span className='text-sm font-medium text-amber-800 dark:text-amber-200'>
+            {t('Promote relay station redemption codes, contact the admin!')}
+          </span>
+        </div>
 
         {sitesQuery.isLoading ? (
           <FreeTokensLoading />

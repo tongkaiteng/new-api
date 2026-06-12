@@ -89,7 +89,7 @@ export const PROTOCOL_OPTIONS = [
   { value: 1, key: 'OpenAI v1' },
   { value: 2, key: 'Anthropic Message' },
   { value: 3, key: 'Gemini' },
-  { value: 4, key: 'Custom' },
+  // { value: 4, key: 'Custom' },
 ] as const
 
 export interface ModelOption {
