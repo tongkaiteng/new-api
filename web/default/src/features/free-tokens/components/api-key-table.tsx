@@ -69,6 +69,8 @@ export function FreeApiKeyTable() {
   const [searchKeyword, setSearchKeyword] = useState('')
   const [protocol, setProtocol] = useState<number>(0)
   const [searchProtocol, setSearchProtocol] = useState<number>(0)
+  const [status, setStatus] = useState<number>(-1)
+  const [searchStatus, setSearchStatus] = useState<number>(-1)
   const [detailItem, setDetailItem] = useState<FreeApiKey | null>(null)
   const [claimingId, setClaimingId] = useState<number | null>(null)
 
@@ -77,6 +79,7 @@ export function FreeApiKeyTable() {
     page_size: PAGE_SIZE,
     keyword: searchKeyword,
     protocol: searchProtocol,
+    status: searchStatus,
   })
 
   const claimMutation = useClaimFreeApiKey()
@@ -89,6 +92,7 @@ export function FreeApiKeyTable() {
     setPage(1)
     setSearchKeyword(keyword.trim())
     setSearchProtocol(protocol)
+    setSearchStatus(status)
   }
 
   const handleReset = () => {
@@ -97,6 +101,8 @@ export function FreeApiKeyTable() {
     setSearchKeyword('')
     setProtocol(0)
     setSearchProtocol(0)
+    setStatus(-1)
+    setSearchStatus(-1)
   }
 
   const getProtocolLabel = (protocol: number) => {
@@ -110,9 +116,22 @@ export function FreeApiKeyTable() {
     2: { label: t('Unavailable'), variant: 'destructive' },
   }
 
+  const STATUS_FILTER_OPTIONS = [
+    { value: -1, label: t('All') },
+    { value: 0, label: t('Untested') },
+    { value: 1, label: t('Available') },
+    { value: 2, label: t('Unavailable') },
+  ]
+
+  const getStatusFilterLabel = (value: number) => {
+    const opt = STATUS_FILTER_OPTIONS.find((o) => o.value === value)
+    return opt ? opt.label : t('All')
+  }
+
   const getStatusLabel = (status: number | undefined) => {
     const cfg = STATUS_CONFIG[status ?? 0] ?? STATUS_CONFIG[0]
-    return <Badge variant={cfg.variant} className='text-xs'>{cfg.label}</Badge>
+    const badgeClass = status === 1 ? 'bg-emerald-500 text-white hover:bg-emerald-600 text-xs' : 'text-xs'
+    return <Badge variant={cfg.variant} className={badgeClass}>{cfg.label}</Badge>
   }
 
   const selectedProtocolLabel = protocol === 0 ? t('All') : getProtocolLabel(protocol)
@@ -142,7 +161,12 @@ export function FreeApiKeyTable() {
   }
 
   return (
-    <div className='space-y-4'>
+    <div className='space-y-10'>
+
+      {/* Page title */}
+      <h1 className='text-2xl font-extrabold tracking-tight sm:text-3xl'>
+        {t('免费领取社区token')}
+      </h1>
 
       {/* Toolbar */}
       <FreeTokensToolbar
@@ -157,6 +181,22 @@ export function FreeApiKeyTable() {
       />
       {/* Search bar */}
       <div className='flex flex-wrap gap-2'>
+        <Select
+          value={String(status)}
+          onValueChange={(v) => setStatus(Number(v))}
+        >
+          <SelectTrigger className='w-[140px]'>
+            <span className='text-muted-foreground text-xs'>{t('Status')}:</span>
+            <span className='flex-1 text-left'>{getStatusFilterLabel(status)}</span>
+          </SelectTrigger>
+          <SelectContent>
+            {STATUS_FILTER_OPTIONS.map((opt) => (
+              <SelectItem key={opt.value} value={String(opt.value)}>
+                {opt.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Select
           value={String(protocol)}
           onValueChange={(v) => setProtocol(Number(v))}
@@ -200,8 +240,8 @@ export function FreeApiKeyTable() {
           <TableHeader>
             <TableRow>
               <TableHead>{t('API Address')}</TableHead>
-              <TableHead>{t('Protocol Format')}</TableHead>
               <TableHead>{t('API Key')}</TableHead>
+              <TableHead>{t('Protocol Format')}</TableHead>              
               <TableHead>{t('Supported Models')}</TableHead>
               <TableHead>{t('Status')}</TableHead>
               <TableHead>{t('Shared by')}</TableHead>
@@ -233,13 +273,13 @@ export function FreeApiKeyTable() {
                     <TableCell className='max-w-[160px] truncate font-mono text-xs'>
                       {item.api_address}
                     </TableCell>
+                    <TableCell className='max-w-[120px] truncate font-mono text-xs'>
+                      {item.api_key}
+                    </TableCell>
                     <TableCell>
                       <Badge variant='outline' className='text-xs'>
                         {getProtocolLabel(item.protocol)}
                       </Badge>
-                    </TableCell>
-                    <TableCell className='max-w-[120px] truncate font-mono text-xs'>
-                      {item.api_key}
                     </TableCell>
                     <TableCell className='max-w-[140px] truncate text-xs'>
                       {item.models}
@@ -331,9 +371,9 @@ export function FreeApiKeyTable() {
             <DialogTitle>{t('API Key Details')}</DialogTitle>
           </DialogHeader>
           {detailItem && (
-            <div className='space-y-4'>
+            <div className='min-w-0 space-y-4 overflow-hidden'>
               <div className='bg-muted/60 grid grid-cols-2 gap-3 rounded-lg p-3 text-sm'>
-                <div>
+                <div className='min-w-0'>
                   <span className='text-muted-foreground text-xs'>{t('API Address')}</span>
                   <p className='mt-0.5 truncate font-mono text-xs'>
                     {detailItem.api_address}
@@ -343,18 +383,18 @@ export function FreeApiKeyTable() {
                   <span className='text-muted-foreground text-xs'>{t('Protocol Format')}</span>
                   <p className='mt-0.5'>{getProtocolLabel(detailItem.protocol)}</p>
                 </div>
-                <div className='col-span-2'>
+                <div className='col-span-2 min-w-0'>
                   <span className='text-muted-foreground text-xs'>{t('Supported Models')}</span>
-                  <p className='mt-0.5'>{detailItem.models}</p>
+                  <p className='mt-0.5 break-words'>{detailItem.models}</p>
                 </div>
                 <div className='col-span-2'>
                   <span className='text-muted-foreground text-xs'>{t('Shared by')}</span>
                   <p className='mt-0.5'>{detailItem.username}</p>
                 </div>
                 {detailItem.note && (
-                  <div className='col-span-2'>
+                  <div className='col-span-2 min-w-0'>
                     <span className='text-muted-foreground text-xs'>{t('Note')}</span>
-                    <p className='mt-0.5 text-sm'>{detailItem.note}</p>
+                    <p className='mt-0.5 break-words text-sm'>{detailItem.note}</p>
                   </div>
                 )}
               </div>
@@ -362,7 +402,7 @@ export function FreeApiKeyTable() {
                 <p className='text-muted-foreground mb-1 text-xs font-medium'>
                   {t('API Key')}
                 </p>
-                <div className='flex items-center gap-2'>
+                <div className='flex min-w-0 items-center gap-2'>
                   <code className='min-w-0 flex-1 truncate text-sm font-semibold'>
                     {detailItem.api_key}
                   </code>

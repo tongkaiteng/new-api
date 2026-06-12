@@ -60,6 +60,7 @@ export function useFreeApiKeys(params: {
   page_size?: number
   keyword?: string
   protocol?: number
+  status?: number
 }) {
   return useQuery({
     queryKey: ['free-api-keys', params],

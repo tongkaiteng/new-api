@@ -306,6 +306,7 @@ func GetFreeApiKeys(c *gin.Context) {
 	pageSize, _ := strconv.Atoi(c.DefaultQuery("page_size", "20"))
 	keyword := c.Query("keyword")
 	protocol, _ := strconv.Atoi(c.DefaultQuery("protocol", "0"))
+	status, _ := strconv.Atoi(c.DefaultQuery("status", "-1"))
 	userId := c.GetInt("id")
 
 	if page < 1 {
@@ -315,7 +316,7 @@ func GetFreeApiKeys(c *gin.Context) {
 		pageSize = 20
 	}
 
-	items, total, err := model.GetFreeTokenApiKeysPublic(page, pageSize, keyword, protocol, userId)
+	items, total, err := model.GetFreeTokenApiKeysPublic(page, pageSize, keyword, protocol, status, userId)
 	if err != nil {
 		common.ApiError(c, err)
 		return

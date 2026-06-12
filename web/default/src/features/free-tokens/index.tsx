@@ -84,6 +84,7 @@ export function FreeTokens() {
           isAuthed={isAuthed}
           authUser={authUser}
           onSignIn={handleSignIn}
+          claimsDefaultTab='codes'
         />
 
         {sitesQuery.isLoading ? (

@@ -9,6 +9,7 @@ interface FreeTokensToolbarProps {
   isAuthed: boolean
   authUser: AuthUser | null
   onSignIn: () => void
+  claimsDefaultTab?: 'api-keys' | 'codes'
 }
 
 export function FreeTokensToolbar(props: FreeTokensToolbarProps) {
@@ -45,7 +46,10 @@ export function FreeTokensToolbar(props: FreeTokensToolbarProps) {
               props.onSignIn()
               return
             }
-            navigate({ to: '/free-tokens/claims' })
+            navigate({
+              to: '/free-tokens/claims',
+              search: props.claimsDefaultTab ? { tab: props.claimsDefaultTab } : undefined,
+            })
           }}
         >
           <List className='mr-1.5 h-4 w-4' />

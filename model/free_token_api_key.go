@@ -90,7 +90,7 @@ func IsFreeApiKeyAlreadyShared(apiKey string) (bool, error) {
 	return count > 0, err
 }
 
-func GetFreeTokenApiKeysPublic(page, pageSize int, keyword string, protocol int, userId int) ([]*FreeTokenApiKeyPublic, int64, error) {
+func GetFreeTokenApiKeysPublic(page, pageSize int, keyword string, protocol int, status int, userId int) ([]*FreeTokenApiKeyPublic, int64, error) {
 	var items []*FreeTokenApiKeyPublic
 	var total int64
 
@@ -109,6 +109,10 @@ func GetFreeTokenApiKeysPublic(page, pageSize int, keyword string, protocol int,
 
 	if protocol > 0 {
 		baseQuery = baseQuery.Where("a.protocol = ?", protocol)
+	}
+
+	if status >= 0 {
+		baseQuery = baseQuery.Where("a.status = ?", status)
 	}
 
 	if err := baseQuery.Count(&total).Error; err != nil {

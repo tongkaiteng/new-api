@@ -17,6 +17,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { Copy, ExternalLink } from 'lucide-react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import {
@@ -33,6 +34,25 @@ import type { FreeTokenClaimRecord } from '../types'
 
 type FreeTokenClaimsSectionProps = {
   claims: FreeTokenClaimRecord[]
+}
+
+function SiteLogo({ logoUrl, siteName }: { logoUrl: string; siteName: string }) {
+  const [error, setError] = useState(false)
+  if (!logoUrl || error) {
+    return (
+      <div className='bg-muted flex h-6 w-6 shrink-0 items-center justify-center rounded font-medium text-xs'>
+        {siteName.charAt(0).toUpperCase()}
+      </div>
+    )
+  }
+  return (
+    <img
+      src={logoUrl}
+      alt={siteName}
+      className='h-6 w-6 shrink-0 rounded object-contain'
+      onError={() => setError(true)}
+    />
+  )
 }
 
 export function FreeTokenClaimsSection(props: FreeTokenClaimsSectionProps) {
@@ -57,11 +77,12 @@ export function FreeTokenClaimsSection(props: FreeTokenClaimsSectionProps) {
         </p>
       </div>
 
-      <div className='overflow-hidden rounded-xl border'>
+      <div className='overflow-x-auto rounded-xl border'>
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>{t('Site name')}</TableHead>
+              <TableHead>{t('Site URL')}</TableHead>
               <TableHead>{t('Bonus label')}</TableHead>
               <TableHead>{t('Code')}</TableHead>
               <TableHead>{t('Claimed at')}</TableHead>
@@ -71,31 +92,36 @@ export function FreeTokenClaimsSection(props: FreeTokenClaimsSectionProps) {
             {claims.map((claim) => (
               <TableRow key={claim.id}>
                 <TableCell className='font-medium'>
-                  <span className='mr-2'>{claim.site_name}</span>
-                  {claim.site_url ? (
-                      <Button type='button' variant='outline' size='sm' asChild>
-                        <a
-                          href={claim.site_url}
-                          target='_blank'
-                          rel='noopener noreferrer'
-                          title={`打开站点：${claim.site_name}`}
-                        >
-                          <ExternalLink className='ml-1.5 h-3.5 w-3.5' />
-                        </a>
-                      </Button>
-                    ) : null}
+                  <div className='flex items-center gap-2'>
+                    <SiteLogo logoUrl={claim.logo_url} siteName={claim.site_name} />
+                    <span>{claim.site_name}</span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                    <a
+                      href={claim.site_url}
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      className='inline-flex max-w-[180px] items-center gap-1 truncate text-sm underline-offset-4 hover:underline'
+                    >
+                      {claim.site_url}
+                      <ExternalLink className='h-3 w-3 shrink-0' />
+                    </a>
                 </TableCell>
                 <TableCell>{claim.bonus || '—'}</TableCell>
-                <TableCell>
-                  <code className='text-sm'>{claim.code}</code>
-                  <Button
+                <TableCell className='max-w-[200px]'>
+                  <div className='flex items-center gap-1'>
+                    <code className='min-w-0 flex-1 truncate text-sm'>{claim.code}</code>
+                    <Button
                       type='button'
                       variant='ghost'
                       size='sm'
+                      className='h-7 w-7 shrink-0 p-0'
                       onClick={() => handleCopyCode(claim.code)}
                     >
-                      <Copy className='mr-1.5 h-3.5 w-3.5' />
+                      <Copy className='h-3.5 w-3.5' />
                     </Button>
+                  </div>
                 </TableCell>
                 <TableCell>{formatTimestamp(claim.claimed_time)}</TableCell>
               </TableRow>

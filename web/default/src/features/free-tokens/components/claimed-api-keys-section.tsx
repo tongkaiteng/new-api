@@ -46,6 +46,18 @@ export function ClaimedApiKeysSection() {
     return opt ? t(opt.key) : t('Custom')
   }
 
+  const STATUS_CONFIG: Record<number, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
+    0: { label: t('Untested'), variant: 'secondary' },
+    1: { label: t('Available'), variant: 'default' },
+    2: { label: t('Unavailable'), variant: 'destructive' },
+  }
+
+  const getStatusLabel = (status: number | undefined) => {
+    const cfg = STATUS_CONFIG[status ?? 0] ?? STATUS_CONFIG[0]
+    const badgeClass = status === 1 ? 'bg-emerald-500 text-white hover:bg-emerald-600 text-xs' : 'text-xs'
+    return <Badge variant={cfg.variant} className={badgeClass}>{cfg.label}</Badge>
+  }
+
   if (isLoading) {
     return <Skeleton className='h-40 rounded-xl' />
   }
@@ -67,7 +79,7 @@ export function ClaimedApiKeysSection() {
         </p>
       </div>
 
-      <div className='overflow-hidden rounded-xl border'>
+      <div className='overflow-x-auto rounded-xl border'>
       <Table>
         <TableHeader>
           <TableRow>
@@ -75,33 +87,44 @@ export function ClaimedApiKeysSection() {
             <TableHead>{t('API Key')}</TableHead>
             <TableHead>{t('Protocol Format')}</TableHead>
             <TableHead>{t('Supported Models')}</TableHead>
+            <TableHead>{t('Status')}</TableHead>
             <TableHead>{t('Claimed at')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {items.map((item) => (
             <TableRow key={item.id}>
-              <TableCell className='max-w-[160px] truncate font-mono text-xs'>
-                {item.api_address}
-                <Button
-                  type='button'
-                  variant='ghost'
-                  size='sm'
-                  onClick={() => copyToClipboard(item.api_address)}
-                >
-                  <Copy className='mr-1.5 h-3.5 w-3.5' />
-                </Button>
+              <TableCell className='max-w-[180px]'>
+                <div className='flex items-center gap-1'>
+                  <span className='min-w-0 flex-1 truncate font-mono text-xs'>
+                    {item.api_address}
+                  </span>
+                  <Button
+                    type='button'
+                    variant='ghost'
+                    size='sm'
+                    className='h-7 w-7 shrink-0 p-0'
+                    onClick={() => copyToClipboard(item.api_address)}
+                  >
+                    <Copy className='h-3.5 w-3.5' />
+                  </Button>
+                </div>
               </TableCell>
-              <TableCell className='max-w-[120px] truncate font-mono text-xs'>
-                {item.api_key}
-                <Button
-                  type='button'
-                  variant='ghost'
-                  size='sm'
-                  onClick={() => copyToClipboard(item.api_key)}
-                >
-                  <Copy className='mr-1.5 h-3.5 w-3.5' />
-                </Button>
+              <TableCell className='max-w-[160px]'>
+                <div className='flex items-center gap-1'>
+                  <span className='min-w-0 flex-1 truncate font-mono text-xs'>
+                    {item.api_key}
+                  </span>
+                  <Button
+                    type='button'
+                    variant='ghost'
+                    size='sm'
+                    className='h-7 w-7 shrink-0 p-0'
+                    onClick={() => copyToClipboard(item.api_key)}
+                  >
+                    <Copy className='h-3.5 w-3.5' />
+                  </Button>
+                </div>
               </TableCell>
               <TableCell>
                 <Badge variant='outline' className='text-xs'>
@@ -110,6 +133,9 @@ export function ClaimedApiKeysSection() {
               </TableCell>
               <TableCell className='max-w-[140px] truncate text-xs'>
                 {item.models}
+              </TableCell>
+              <TableCell>
+                {getStatusLabel(item.status)}
               </TableCell>
               <TableCell className='text-sm'>
                 {item.claimed_time ? formatTimestamp(item.claimed_time) : '—'}

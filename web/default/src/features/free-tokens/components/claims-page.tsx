@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useSearch } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -14,6 +14,9 @@ export function FreeTokenClaimsPage() {
   const authUser = useAuthStore((state) => state.auth.user)
   const isAuthed = Boolean(authUser)
 
+  const search = useSearch({ strict: false }) as { tab?: string }
+  const defaultTab = search.tab === 'codes' ? 'codes' : 'api-keys'
+
   const claimsQuery = useFreeTokenClaims(isAuthed)
   const claims = claimsQuery.data?.data ?? []
 
@@ -26,7 +29,7 @@ export function FreeTokenClaimsPage() {
   }
 
   return (
-    <Tabs defaultValue='api-keys' className='space-y-4'>
+    <Tabs defaultValue={defaultTab} className='space-y-4'>
       <TabsList>
         <TabsTrigger value='api-keys'>{t('Free API Keys')}</TabsTrigger>
         <TabsTrigger value='codes'>{t('Free Redeem Code')}</TabsTrigger>

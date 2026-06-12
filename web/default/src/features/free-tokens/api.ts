@@ -60,6 +60,7 @@ export async function getFreeApiKeys(params: {
   page_size?: number
   keyword?: string
   protocol?: number
+  status?: number
 }): Promise<
   ApiResponse<{ items: FreeApiKey[]; total: number; page: number; page_size: number }>
 > {
