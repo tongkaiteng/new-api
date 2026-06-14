@@ -17,7 +17,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -41,9 +41,10 @@ import {
 interface TestFormProps {
   onSubmit: (formState: TestFormState) => Promise<void>
   isLoading: boolean
+  onChange?: (formState: TestFormState) => void
 }
 
-export function TestForm({ onSubmit, isLoading }: TestFormProps) {
+export function TestForm({ onSubmit, isLoading, onChange }: TestFormProps) {
   const { t } = useTranslation()
   const [apiAddress, setApiAddress] = useState('')
   const [apiKey, setApiKey] = useState('')
@@ -53,6 +54,17 @@ export function TestForm({ onSubmit, isLoading }: TestFormProps) {
   const [isCustomModel, setIsCustomModel] = useState(false)
   const [protocol, setProtocol] = useState(PROTOCOL_OPTIONS[0].value.toString())
   const [prompt, setPrompt] = useState('')
+
+  useEffect(() => {
+    onChange?.({
+      apiAddress,
+      apiKey,
+      model,
+      customModel,
+      protocol: parseInt(protocol),
+      prompt,
+    })
+  }, [apiAddress, apiKey, model, customModel, protocol, prompt, onChange])
 
   const handleModelChange = (value: string) => {
     if (value === '__custom__') {

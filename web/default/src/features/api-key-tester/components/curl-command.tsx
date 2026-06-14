@@ -20,7 +20,7 @@ For commercial licensing, please contact support@quantumnous.com
 import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CopyButton } from '@/components/copy-button'
-import { generateCurlFromResult } from '../lib/generate-curl'
+import { generateCurl, generateCurlFromResult } from '../lib/generate-curl'
 import type { TestFormState, TestResult } from '../types'
 
 interface CurlCommandProps {
@@ -31,11 +31,10 @@ interface CurlCommandProps {
 export function CurlCommand({ formState, result }: CurlCommandProps) {
   const { t } = useTranslation()
 
+  // Use actual request body from result if available, otherwise generate from form state
   const curlCmd = result?.requestBody
     ? generateCurlFromResult(formState, result.requestBody)
-    : ''
-
-  if (!curlCmd) return null
+    : generateCurl(formState)
 
   return (
     <Card>

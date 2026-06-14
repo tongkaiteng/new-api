@@ -37,6 +37,14 @@ export function ApiKeyTester() {
   const { t } = useTranslation()
   const [result, setResult] = useState<TestResult | null>(null)
   const [formState, setFormState] = useState<TestFormState | null>(null)
+  const [liveFormState, setLiveFormState] = useState<TestFormState>({
+    apiAddress: '',
+    apiKey: '',
+    model: 'claude-opus-4-8',
+    customModel: '',
+    protocol: 1,
+    prompt: '',
+  })
   const [isLoading, setIsLoading] = useState(false)
 
   const handleTest = useCallback(
@@ -128,13 +136,13 @@ export function ApiKeyTester() {
         <SecurityNotice />
 
         {/* Test form */}
-        <TestForm onSubmit={handleTest} isLoading={isLoading} />
+        <TestForm onSubmit={handleTest} isLoading={isLoading} onChange={setLiveFormState} />
 
         {/* Results */}
         {result && <TestResults result={result} />}
 
-        {/* Curl command */}
-        {formState && <CurlCommand formState={formState} result={result} />}
+        {/* Curl command — always visible, updates live */}
+        <CurlCommand formState={liveFormState} result={result} />
 
         {/* Terminal guide */}
         <TerminalGuide />
