@@ -27,15 +27,18 @@ services:
     volumes:
       - dev_data:/data
     environment:
-      - SQL_DSN=postgresql://root:123456@postgres:5432/new-api
+      #- SQL_DSN=postgresql://root:123456@postgres:5432/new-api
+      - SQL_DSN=root:123456@tcp(mysql:3306)/new-api  # Point to the mysql service, uncomment if using MySQL
       - REDIS_CONN_STRING=redis://redis
       - TZ=Asia/Shanghai
       - BATCH_UPDATE_ENABLED=true
     depends_on:
       redis:
         condition: service_started
-      postgres:
-        condition: service_healthy
+      # postgres:
+      #   condition: service_healthy
+      mysql:
+        condition: service_started  # Uncomment if using MySQL
     networks:
       - dev-network
 
@@ -46,29 +49,43 @@ services:
     networks:
       - dev-network
 
-  postgres:
-    image: postgres:15-alpine
-    container_name: new-api-dev-pg
-    restart: unless-stopped
-    ports:
-      - "5432:5432"
+  # postgres:
+  #   image: postgres:15-alpine
+  #   container_name: new-api-dev-pg
+  #   restart: unless-stopped
+  #   ports:
+  #     - "5432:5432"
+  #   environment:
+  #     POSTGRES_USER: root
+  #     POSTGRES_PASSWORD: 123456
+  #     POSTGRES_DB: new-api
+  #   volumes:
+  #     - dev_pg_data:/var/lib/postgresql/data
+  #   networks:
+  #     - dev-network
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U root -d new-api"]
+  #     interval: 5s
+  #     timeout: 3s
+  #     retries: 5
+
+  mysql:
+    image: mysql:8.2
+    container_name: mysql
+    restart: always
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: 123456
-      POSTGRES_DB: new-api
+      MYSQL_ROOT_PASSWORD: 123456  # ⚠️ IMPORTANT: Change this password in production!
+      MYSQL_DATABASE: new-api
     volumes:
-      - dev_pg_data:/var/lib/postgresql/data
+      - dev_mysql_data:/var/lib/mysql
     networks:
       - dev-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U root -d new-api"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-
+    ports:
+      - "3306:3306"  # Uncomment if you need to access MySQL from outside Docker
 volumes:
   dev_data:
-  dev_pg_data:
+  #dev_pg_data:
+  dev_mysql_data:
 
 networks:
   dev-network:

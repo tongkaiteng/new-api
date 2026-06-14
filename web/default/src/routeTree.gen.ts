@@ -18,6 +18,7 @@ import { Route as SetupIndexRouteImport } from './routes/setup/index'
 import { Route as RankingsIndexRouteImport } from './routes/rankings/index'
 import { Route as PricingIndexRouteImport } from './routes/pricing/index'
 import { Route as FreeTokensIndexRouteImport } from './routes/free-tokens/index'
+import { Route as ApiKeyTesterIndexRouteImport } from './routes/api-key-tester/index'
 import { Route as AboutIndexRouteImport } from './routes/about/index'
 import { Route as OauthProviderRouteImport } from './routes/oauth/$provider'
 import { Route as FreeTokensShareRouteImport } from './routes/free-tokens/share'
@@ -116,6 +117,11 @@ const PricingIndexRoute = PricingIndexRouteImport.update({
 const FreeTokensIndexRoute = FreeTokensIndexRouteImport.update({
   id: '/free-tokens/',
   path: '/free-tokens/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiKeyTesterIndexRoute = ApiKeyTesterIndexRouteImport.update({
+  id: '/api-key-tester/',
+  path: '/api-key-tester/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutIndexRoute = AboutIndexRouteImport.update({
@@ -455,6 +461,7 @@ export interface FileRoutesByFullPath {
   '/free-tokens/share': typeof FreeTokensShareRoute
   '/oauth/$provider': typeof OauthProviderRoute
   '/about/': typeof AboutIndexRoute
+  '/api-key-tester/': typeof ApiKeyTesterIndexRoute
   '/free-tokens/': typeof FreeTokensIndexRoute
   '/pricing/': typeof PricingIndexRoute
   '/rankings/': typeof RankingsIndexRoute
@@ -519,6 +526,7 @@ export interface FileRoutesByTo {
   '/free-tokens/share': typeof FreeTokensShareRoute
   '/oauth/$provider': typeof OauthProviderRoute
   '/about': typeof AboutIndexRoute
+  '/api-key-tester': typeof ApiKeyTesterIndexRoute
   '/free-tokens': typeof FreeTokensIndexRoute
   '/pricing': typeof PricingIndexRoute
   '/rankings': typeof RankingsIndexRoute
@@ -587,6 +595,7 @@ export interface FileRoutesById {
   '/free-tokens/share': typeof FreeTokensShareRoute
   '/oauth/$provider': typeof OauthProviderRoute
   '/about/': typeof AboutIndexRoute
+  '/api-key-tester/': typeof ApiKeyTesterIndexRoute
   '/free-tokens/': typeof FreeTokensIndexRoute
   '/pricing/': typeof PricingIndexRoute
   '/rankings/': typeof RankingsIndexRoute
@@ -654,6 +663,7 @@ export interface FileRouteTypes {
     | '/free-tokens/share'
     | '/oauth/$provider'
     | '/about/'
+    | '/api-key-tester/'
     | '/free-tokens/'
     | '/pricing/'
     | '/rankings/'
@@ -718,6 +728,7 @@ export interface FileRouteTypes {
     | '/free-tokens/share'
     | '/oauth/$provider'
     | '/about'
+    | '/api-key-tester'
     | '/free-tokens'
     | '/pricing'
     | '/rankings'
@@ -785,6 +796,7 @@ export interface FileRouteTypes {
     | '/free-tokens/share'
     | '/oauth/$provider'
     | '/about/'
+    | '/api-key-tester/'
     | '/free-tokens/'
     | '/pricing/'
     | '/rankings/'
@@ -844,6 +856,7 @@ export interface RootRouteChildren {
   FreeTokensShareRoute: typeof FreeTokensShareRoute
   OauthProviderRoute: typeof OauthProviderRoute
   AboutIndexRoute: typeof AboutIndexRoute
+  ApiKeyTesterIndexRoute: typeof ApiKeyTesterIndexRoute
   FreeTokensIndexRoute: typeof FreeTokensIndexRoute
   PricingIndexRoute: typeof PricingIndexRoute
   RankingsIndexRoute: typeof RankingsIndexRoute
@@ -914,6 +927,13 @@ declare module '@tanstack/react-router' {
       path: '/free-tokens'
       fullPath: '/free-tokens/'
       preLoaderRoute: typeof FreeTokensIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api-key-tester/': {
+      id: '/api-key-tester/'
+      path: '/api-key-tester'
+      fullPath: '/api-key-tester/'
+      preLoaderRoute: typeof ApiKeyTesterIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about/': {
@@ -1463,6 +1483,7 @@ const rootRouteChildren: RootRouteChildren = {
   FreeTokensShareRoute: FreeTokensShareRoute,
   OauthProviderRoute: OauthProviderRoute,
   AboutIndexRoute: AboutIndexRoute,
+  ApiKeyTesterIndexRoute: ApiKeyTesterIndexRoute,
   FreeTokensIndexRoute: FreeTokensIndexRoute,
   PricingIndexRoute: PricingIndexRoute,
   RankingsIndexRoute: RankingsIndexRoute,

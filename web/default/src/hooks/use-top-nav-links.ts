@@ -103,6 +103,17 @@ export function useTopNavLinks(): TopNavLink[] {
     })
   }
 
+  // AI Tools (dropdown)
+  const apiKeyTester = modules?.apiKeyTester
+  if (apiKeyTester && typeof apiKeyTester === 'object' && apiKeyTester.enabled) {
+    links.push({
+      title: t('AI Tools'),
+      children: [
+        { title: t('API Key Tester'), href: '/api-key-tester' },
+      ],
+    })
+  }
+
   // Docs (supports external links)
   if (modules?.docs !== false) {
     if (docsLink) {

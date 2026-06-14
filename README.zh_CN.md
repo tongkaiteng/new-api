@@ -128,6 +128,11 @@ docker-compose up -d
 # 拉取最新镜像
 docker pull calciumion/new-api:latest
 
+# 本地构建最新景象
+# 如果你开启buildkit报错，尝试关闭它
+DOCKER_BUILDKIT=0 docker build -t new-api:v1.0.0-rc.10 .
+docker tag new-api:v1.0.0-rc.10 hub.qpaas.com/test/new-api:v1.0.0-rc.10
+
 # 使用 SQLite（默认）
 docker run --name new-api -d --restart always \
   -p 3000:3000 \

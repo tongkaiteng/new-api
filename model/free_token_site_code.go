@@ -17,7 +17,7 @@ const (
 type FreeTokenSiteCode struct {
 	Id          int    `json:"id"`
 	SiteId      int    `json:"site_id" gorm:"uniqueIndex:idx_free_token_site_code"`
-	Code        string `json:"code" gorm:"uniqueIndex:idx_free_token_site_code"`
+	Code        string `json:"code" gorm:"type:varchar(255);not null;uniqueIndex:idx_free_token_site_code"`
 	Status      int    `json:"status" gorm:"default:1"`
 	UsedUserId  int    `json:"used_user_id" gorm:"default:0"`
 	ClaimedTime int64  `json:"claimed_time" gorm:"bigint;default:0"`

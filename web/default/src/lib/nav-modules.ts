@@ -20,7 +20,7 @@ import { getStatus } from '@/lib/api'
 
 export type ModuleAccess = { enabled: boolean; requireAuth: boolean }
 
-export type HeaderNavModule = 'rankings' | 'pricing' | 'freeTokens'
+export type HeaderNavModule = 'rankings' | 'pricing' | 'freeTokens' | 'apiKeyTester'
 
 export type HeaderNavModules = {
   home: boolean
@@ -28,6 +28,7 @@ export type HeaderNavModules = {
   pricing: ModuleAccess
   rankings: ModuleAccess
   freeTokens: ModuleAccess
+  apiKeyTester: ModuleAccess
   docs: boolean
   about: boolean
   [key: string]: boolean | ModuleAccess
@@ -39,6 +40,7 @@ const DEFAULT_HEADER_NAV_MODULES: HeaderNavModules = {
   pricing: { enabled: true, requireAuth: false },
   rankings: { enabled: true, requireAuth: false },
   freeTokens: { enabled: true, requireAuth: false },
+  apiKeyTester: { enabled: true, requireAuth: false },
   docs: true,
   about: true,
 }
@@ -47,6 +49,7 @@ const DEFAULTS: Record<HeaderNavModule, ModuleAccess> = {
   pricing: DEFAULT_HEADER_NAV_MODULES.pricing,
   rankings: DEFAULT_HEADER_NAV_MODULES.rankings,
   freeTokens: DEFAULT_HEADER_NAV_MODULES.freeTokens,
+  apiKeyTester: DEFAULT_HEADER_NAV_MODULES.apiKeyTester,
 }
 
 function cloneHeaderNavDefaults(): HeaderNavModules {
@@ -55,6 +58,7 @@ function cloneHeaderNavDefaults(): HeaderNavModules {
     pricing: { ...DEFAULT_HEADER_NAV_MODULES.pricing },
     rankings: { ...DEFAULT_HEADER_NAV_MODULES.rankings },
     freeTokens: { ...DEFAULT_HEADER_NAV_MODULES.freeTokens },
+    apiKeyTester: { ...DEFAULT_HEADER_NAV_MODULES.apiKeyTester },
   }
 }
 
@@ -124,6 +128,10 @@ export function parseHeaderNavModules(raw: unknown): HeaderNavModules {
     }
     if (key === 'freeTokens') {
       result.freeTokens = parseAccess(value, result.freeTokens)
+      return
+    }
+    if (key === 'apiKeyTester') {
+      result.apiKeyTester = parseAccess(value, result.apiKeyTester)
       return
     }
 
