@@ -17,7 +17,11 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import * as React from 'react'
+<<<<<<< HEAD
 import { type Row } from '@tanstack/react-table'
+=======
+import { type Row, type Table as TanstackTable } from '@tanstack/react-table'
+>>>>>>> upstream/main
 import { cn } from '@/lib/utils'
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
 import {
@@ -46,8 +50,17 @@ export { DataTableRow } from './data-table-row'
 
 export function DataTableView<TData>(props: DataTableViewProps<TData>) {
   const rows = props.rows ?? props.table.getRowModel().rows
+<<<<<<< HEAD
   const colSpan = props.table.getVisibleLeafColumns().length
   const columnClassName = useResolvedColumnClassName(
+=======
+  const colSpan = React.useMemo(
+    () => props.table.getVisibleLeafColumns().length,
+    [props.table]
+  )
+  const columnClassName = useResolvedColumnClassName(
+    props.table,
+>>>>>>> upstream/main
     props.getColumnClassName,
     props.pinnedColumns
   )
@@ -120,6 +133,7 @@ function SplitHeaderTableView<TData>({
   colSpan: number
   getColumnClassName: DataTableColumnClassName
 }) {
+<<<<<<< HEAD
   const headerHostRef = React.useRef<HTMLDivElement>(null)
   const bodyHostRef = React.useRef<HTMLDivElement>(null)
   const tableSizing = getTableSizing(props)
@@ -146,6 +160,10 @@ function SplitHeaderTableView<TData>({
     }
   }, [rows.length, props.tableClassName, props.colgroup])
 
+=======
+  const tableSizing = getTableSizing(props)
+
+>>>>>>> upstream/main
   return (
     <div
       className={cn(
@@ -155,6 +173,7 @@ function SplitHeaderTableView<TData>({
     >
       <div
         className={cn(
+<<<<<<< HEAD
           'flex min-h-0 flex-1 flex-col overflow-hidden',
           props.splitHeaderScrollClassName
         )}
@@ -186,11 +205,39 @@ function SplitHeaderTableView<TData>({
             {renderTableBody(props, rows, colSpan, getColumnClassName)}
           </Table>
         </div>
+=======
+          'min-h-0 flex-1 overflow-auto',
+          '[&_[data-slot=table-header]]:[--table-header-bg:color-mix(in_oklch,var(--muted)_30%,var(--background))]',
+          '[&_[data-slot=table-header]]:[background-color:var(--table-header-bg)]',
+          props.splitHeaderScrollClassName,
+          props.bodyContainerClassName
+        )}
+      >
+        <table
+          data-slot='table'
+          className={cn(
+            'w-full caption-bottom text-sm tabular-nums [&_td]:text-sm [&_td_*]:text-sm [&_th]:text-sm [&_th_*]:text-sm',
+            props.tableClassName
+          )}
+          style={tableSizing.style}
+        >
+          {tableSizing.colgroup}
+          <DataTableHeader
+            table={props.table}
+            applyHeaderSize={props.applyHeaderSize}
+            className={cn('sticky top-0 z-10', props.tableHeaderClassName)}
+            rowClassName={props.tableHeaderRowClassName}
+            getColumnClassName={getColumnClassName}
+          />
+          {renderTableBody(props, rows, colSpan, getColumnClassName)}
+        </table>
+>>>>>>> upstream/main
       </div>
     </div>
   )
 }
 
+<<<<<<< HEAD
 function useResolvedColumnClassName(
   getColumnClassName?: DataTableColumnClassName,
   pinnedColumns?: DataTablePinnedColumn[]
@@ -198,6 +245,21 @@ function useResolvedColumnClassName(
   const pinnedColumnById = React.useMemo(
     () => getPinnedColumnMap(pinnedColumns),
     [pinnedColumns]
+=======
+function useResolvedColumnClassName<TData>(
+  table: TanstackTable<TData>,
+  getColumnClassName?: DataTableColumnClassName,
+  pinnedColumns?: DataTablePinnedColumn[]
+) {
+  const allPinnedColumns = React.useMemo(() => {
+    const metaPinnedColumns = getMetaPinnedColumns(table)
+    return mergePinnedColumns(pinnedColumns, metaPinnedColumns)
+  }, [table, pinnedColumns])
+
+  const pinnedColumnById = React.useMemo(
+    () => getPinnedColumnMap(allPinnedColumns),
+    [allPinnedColumns]
+>>>>>>> upstream/main
   )
 
   return React.useMemo(
@@ -207,6 +269,44 @@ function useResolvedColumnClassName(
   )
 }
 
+<<<<<<< HEAD
+=======
+function getMetaPinnedColumns<TData>(
+  table: TanstackTable<TData>
+): DataTablePinnedColumn[] {
+  return table.getAllColumns().flatMap((column) => {
+    const side = column.columnDef.meta?.pinned
+    if (!side) return []
+
+    return [{ columnId: column.id, side }]
+  })
+}
+
+function mergePinnedColumns(
+  explicitPinnedColumns: DataTablePinnedColumn[] | undefined,
+  metaPinnedColumns: DataTablePinnedColumn[]
+): DataTablePinnedColumn[] | undefined {
+  if (!metaPinnedColumns.length) {
+    return explicitPinnedColumns
+  }
+
+  if (!explicitPinnedColumns?.length) {
+    return metaPinnedColumns
+  }
+
+  const explicitColumnIds = new Set(
+    explicitPinnedColumns.map((column) => column.columnId)
+  )
+
+  return [
+    ...explicitPinnedColumns,
+    ...metaPinnedColumns.filter(
+      (column) => !explicitColumnIds.has(column.columnId)
+    ),
+  ]
+}
+
+>>>>>>> upstream/main
 function getTableSizing<TData>(props: DataTableViewProps<TData>): {
   colgroup?: React.ReactNode
   style?: React.CSSProperties

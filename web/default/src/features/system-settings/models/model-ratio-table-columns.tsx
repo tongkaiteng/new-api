@@ -72,7 +72,10 @@ export function buildModelRatioColumns({
       enableSorting: false,
       enableHiding: false,
       size: 40,
+<<<<<<< HEAD
       meta: { label: t('Select') },
+=======
+>>>>>>> upstream/main
     },
     {
       accessorKey: 'name',
@@ -113,7 +116,7 @@ export function buildModelRatioColumns({
           variant={getModeVariant(row.original.billingMode)}
           copyable={false}
           showDot={false}
-          className='px-0'
+          className='-ml-1.5 px-0'
         />
       ),
       filterFn: (row, id, value) =>
