@@ -35,15 +35,8 @@ export function useSubscriptionsColumns(): ColumnDef<PlanRecord>[] {
       {
         accessorFn: (row) => row.plan.id,
         id: 'id',
-<<<<<<< HEAD
-        meta: { label: t('ID'), mobileHidden: true },
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title={t('ID')} />
-        ),
-=======
         header: t('ID'),
         meta: { mobileHidden: true },
->>>>>>> upstream/main
         cell: ({ row }) => <TableId value={row.original.plan.id} />,
         size: 60,
       },

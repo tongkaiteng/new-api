@@ -17,11 +17,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import * as React from 'react'
-<<<<<<< HEAD
-import { type Row } from '@tanstack/react-table'
-=======
 import { type Row, type Table as TanstackTable } from '@tanstack/react-table'
->>>>>>> upstream/main
 import { cn } from '@/lib/utils'
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
 import {
@@ -50,17 +46,12 @@ export { DataTableRow } from './data-table-row'
 
 export function DataTableView<TData>(props: DataTableViewProps<TData>) {
   const rows = props.rows ?? props.table.getRowModel().rows
-<<<<<<< HEAD
-  const colSpan = props.table.getVisibleLeafColumns().length
-  const columnClassName = useResolvedColumnClassName(
-=======
   const colSpan = React.useMemo(
     () => props.table.getVisibleLeafColumns().length,
     [props.table]
   )
   const columnClassName = useResolvedColumnClassName(
     props.table,
->>>>>>> upstream/main
     props.getColumnClassName,
     props.pinnedColumns
   )
@@ -133,37 +124,8 @@ function SplitHeaderTableView<TData>({
   colSpan: number
   getColumnClassName: DataTableColumnClassName
 }) {
-<<<<<<< HEAD
-  const headerHostRef = React.useRef<HTMLDivElement>(null)
-  const bodyHostRef = React.useRef<HTMLDivElement>(null)
   const tableSizing = getTableSizing(props)
 
-  React.useEffect(() => {
-    const headerScroller = headerHostRef.current?.querySelector<HTMLElement>(
-      '[data-slot=table-container]'
-    )
-    const bodyScroller = bodyHostRef.current?.querySelector<HTMLElement>(
-      '[data-slot=table-container]'
-    )
-
-    if (!headerScroller || !bodyScroller) return
-
-    const syncHeaderScroll = () => {
-      headerScroller.scrollLeft = bodyScroller.scrollLeft
-    }
-
-    syncHeaderScroll()
-    bodyScroller.addEventListener('scroll', syncHeaderScroll, { passive: true })
-
-    return () => {
-      bodyScroller.removeEventListener('scroll', syncHeaderScroll)
-    }
-  }, [rows.length, props.tableClassName, props.colgroup])
-
-=======
-  const tableSizing = getTableSizing(props)
-
->>>>>>> upstream/main
   return (
     <div
       className={cn(
@@ -173,39 +135,6 @@ function SplitHeaderTableView<TData>({
     >
       <div
         className={cn(
-<<<<<<< HEAD
-          'flex min-h-0 flex-1 flex-col overflow-hidden',
-          props.splitHeaderScrollClassName
-        )}
-      >
-        <div
-          ref={headerHostRef}
-          className='[scrollbar-gutter:stable] overflow-hidden [&_[data-slot=table-container]]:overflow-x-hidden'
-        >
-          <Table className={props.tableClassName} style={tableSizing.style}>
-            {tableSizing.colgroup}
-            <DataTableHeader
-              table={props.table}
-              applyHeaderSize={props.applyHeaderSize}
-              className={props.tableHeaderClassName}
-              rowClassName={props.tableHeaderRowClassName}
-              getColumnClassName={getColumnClassName}
-            />
-          </Table>
-        </div>
-        <div
-          ref={bodyHostRef}
-          className={cn(
-            'min-h-0 flex-1 [scrollbar-gutter:stable] overflow-y-auto',
-            props.bodyContainerClassName
-          )}
-        >
-          <Table className={props.tableClassName} style={tableSizing.style}>
-            {tableSizing.colgroup}
-            {renderTableBody(props, rows, colSpan, getColumnClassName)}
-          </Table>
-        </div>
-=======
           'min-h-0 flex-1 overflow-auto',
           '[&_[data-slot=table-header]]:[--table-header-bg:color-mix(in_oklch,var(--muted)_30%,var(--background))]',
           '[&_[data-slot=table-header]]:[background-color:var(--table-header-bg)]',
@@ -231,21 +160,11 @@ function SplitHeaderTableView<TData>({
           />
           {renderTableBody(props, rows, colSpan, getColumnClassName)}
         </table>
->>>>>>> upstream/main
       </div>
     </div>
   )
 }
 
-<<<<<<< HEAD
-function useResolvedColumnClassName(
-  getColumnClassName?: DataTableColumnClassName,
-  pinnedColumns?: DataTablePinnedColumn[]
-) {
-  const pinnedColumnById = React.useMemo(
-    () => getPinnedColumnMap(pinnedColumns),
-    [pinnedColumns]
-=======
 function useResolvedColumnClassName<TData>(
   table: TanstackTable<TData>,
   getColumnClassName?: DataTableColumnClassName,
@@ -259,7 +178,6 @@ function useResolvedColumnClassName<TData>(
   const pinnedColumnById = React.useMemo(
     () => getPinnedColumnMap(allPinnedColumns),
     [allPinnedColumns]
->>>>>>> upstream/main
   )
 
   return React.useMemo(
@@ -269,8 +187,6 @@ function useResolvedColumnClassName<TData>(
   )
 }
 
-<<<<<<< HEAD
-=======
 function getMetaPinnedColumns<TData>(
   table: TanstackTable<TData>
 ): DataTablePinnedColumn[] {
@@ -306,7 +222,6 @@ function mergePinnedColumns(
   ]
 }
 
->>>>>>> upstream/main
 function getTableSizing<TData>(props: DataTableViewProps<TData>): {
   colgroup?: React.ReactNode
   style?: React.CSSProperties

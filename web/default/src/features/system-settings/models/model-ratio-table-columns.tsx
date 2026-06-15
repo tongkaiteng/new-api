@@ -72,10 +72,6 @@ export function buildModelRatioColumns({
       enableSorting: false,
       enableHiding: false,
       size: 40,
-<<<<<<< HEAD
-      meta: { label: t('Select') },
-=======
->>>>>>> upstream/main
     },
     {
       accessorKey: 'name',

@@ -27,17 +27,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-<<<<<<< HEAD
-import { DataTableColumnHeader } from '@/components/data-table'
-import { GroupBadge } from '@/components/group-badge'
-import { ProviderBadge } from '@/components/provider-badge'
-import { StatusBadge, StatusBadgeList } from '@/components/status-badge'
-=======
 import { BadgeListCell } from '@/components/data-table'
 import { GroupBadge } from '@/components/group-badge'
 import { ProviderBadge } from '@/components/provider-badge'
 import { StatusBadge } from '@/components/status-badge'
->>>>>>> upstream/main
 import { TableId } from '@/components/table-id'
 import {
   getModelStatusConfig,
@@ -53,25 +46,6 @@ function getCompactModelIcon(iconKey: string) {
   const baseIconKey = iconKey.split('.')[0]
 
   return getLobeIcon(`${baseIconKey}.Avatar.type={'platform'}`, 20)
-<<<<<<< HEAD
-}
-
-/**
- * Render limited items with "and X more" indicator
- */
-function renderLimitedItems(
-  items: React.ReactNode[],
-  maxDisplay: number = 2
-): React.ReactNode {
-  return (
-    <StatusBadgeList
-      items={items}
-      max={maxDisplay}
-      renderItem={(item) => item}
-    />
-  )
-=======
->>>>>>> upstream/main
 }
 
 /**

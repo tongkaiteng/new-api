@@ -300,10 +300,6 @@ export function useCommonLogsColumns(isAdmin: boolean): ColumnDef<UsageLog>[] {
       },
       enableHiding: false,
       size: 180,
-<<<<<<< HEAD
-      meta: { label: t('Time') },
-=======
->>>>>>> upstream/main
     },
   ]
 

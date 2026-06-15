@@ -106,10 +106,6 @@ export function useDrawingLogsColumns(
         )
       },
       size: 180,
-<<<<<<< HEAD
-      meta: { label: t('Submit Time') },
-=======
->>>>>>> upstream/main
     },
   ]
 

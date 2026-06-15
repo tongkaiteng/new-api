@@ -258,10 +258,7 @@ export function useRedemptionsColumns(): ColumnDef<Redemption>[] {
       id: 'actions',
       header: () => t('Actions'),
       cell: ({ row }) => <DataTableRowActions row={row} />,
-<<<<<<< HEAD
-=======
       meta: { pinned: 'right' as const },
->>>>>>> upstream/main
       size: 88,
     },
   ]

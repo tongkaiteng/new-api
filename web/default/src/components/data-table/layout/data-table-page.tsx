@@ -344,11 +344,7 @@ function renderDesktop<TData>(
       splitHeader={fixedHeight}
       tableContainerClassName={fixedHeight ? 'h-full min-h-0' : undefined}
       tableHeaderClassName={cn(
-<<<<<<< HEAD
-        fixedHeight && 'bg-muted/30',
-=======
         fixedHeight && '[background-color:color-mix(in_oklch,var(--muted)_30%,var(--background))]',
->>>>>>> upstream/main
         props.tableHeaderClassName
       )}
       getColumnClassName={props.getColumnClassName}

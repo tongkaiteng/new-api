@@ -21,10 +21,6 @@ import { Eye, Info, Pencil, Settings2, Timer, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { formatTimestampToDate } from '@/lib/format'
 import { Button } from '@/components/ui/button'
-<<<<<<< HEAD
-import { DataTableColumnHeader } from '@/components/data-table'
-=======
->>>>>>> upstream/main
 import { StatusBadge } from '@/components/status-badge'
 import { TableId } from '@/components/table-id'
 import { getDeploymentStatusConfig } from '../constants'

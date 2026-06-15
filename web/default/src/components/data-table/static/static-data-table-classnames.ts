@@ -22,11 +22,7 @@ export const staticDataTableClassNames = {
   embeddedContainer: 'rounded-none border-0',
   compactTable: 'text-sm',
   compactHeaderRow: 'hover:bg-transparent',
-<<<<<<< HEAD
-  mutedHeaderRow: 'bg-muted/30 hover:bg-muted/30',
-=======
   mutedHeaderRow: '[background-color:color-mix(in_oklch,var(--muted)_30%,var(--background))] hover:[background-color:color-mix(in_oklch,var(--muted)_30%,var(--background))]',
->>>>>>> upstream/main
   compactHeaderCell:
     'text-muted-foreground py-2 text-[10px] font-medium tracking-wider uppercase',
   compactHeaderCellRight:

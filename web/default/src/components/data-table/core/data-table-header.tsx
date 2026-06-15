@@ -16,14 +16,9 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-<<<<<<< HEAD
-import { flexRender, type Table as TanstackTable } from '@tanstack/react-table'
-import { TableHead, TableHeader, TableRow } from '@/components/ui/table'
-=======
 import { flexRender, type Header, type Table as TanstackTable } from '@tanstack/react-table'
 import { TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { DataTableColumnHeader } from './column-header'
->>>>>>> upstream/main
 import type { DataTableColumnClassName } from './types'
 
 type DataTableHeaderProps<TData> = {
@@ -52,16 +47,7 @@ export function DataTableHeader<TData>({
               className={getColumnClassName?.(header.column.id, 'header')}
               style={applyHeaderSize ? { width: header.getSize() } : undefined}
             >
-<<<<<<< HEAD
-              {header.isPlaceholder
-                ? null
-                : flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                  )}
-=======
               {renderHeaderContent(header)}
->>>>>>> upstream/main
             </TableHead>
           ))}
         </TableRow>
@@ -69,8 +55,6 @@ export function DataTableHeader<TData>({
     </TableHeader>
   )
 }
-<<<<<<< HEAD
-=======
 
 function renderHeaderContent<TData>(header: Header<TData, unknown>) {
   if (header.isPlaceholder) return null
@@ -87,4 +71,3 @@ function renderHeaderContent<TData>(header: Header<TData, unknown>) {
   }
   return flexRender(headerDef, header.getContext())
 }
->>>>>>> upstream/main

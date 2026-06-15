@@ -71,10 +71,6 @@ export function useUsersColumns(): ColumnDef<User>[] {
       enableSorting: false,
       enableHiding: false,
       size: 40,
-<<<<<<< HEAD
-      meta: { label: t('Select') },
-=======
->>>>>>> upstream/main
     },
     {
       accessorKey: 'id',
@@ -85,11 +81,7 @@ export function useUsersColumns(): ColumnDef<User>[] {
         )
       },
       size: 80,
-<<<<<<< HEAD
-      meta: { label: t('ID'), mobileHidden: true },
-=======
       meta: { mobileHidden: true },
->>>>>>> upstream/main
     },
     {
       accessorKey: 'username',
@@ -128,11 +120,7 @@ export function useUsersColumns(): ColumnDef<User>[] {
       },
       enableHiding: false,
       size: 220,
-<<<<<<< HEAD
-      meta: { label: t('Username'), mobileTitle: true },
-=======
       meta: { mobileTitle: true },
->>>>>>> upstream/main
     },
     {
       accessorKey: 'status',
@@ -171,11 +159,7 @@ export function useUsersColumns(): ColumnDef<User>[] {
       },
       enableSorting: false,
       size: 120,
-<<<<<<< HEAD
-      meta: { label: t('Status'), mobileBadge: true },
-=======
       meta: { mobileBadge: true },
->>>>>>> upstream/main
     },
     {
       id: 'quota',
@@ -237,10 +221,6 @@ export function useUsersColumns(): ColumnDef<User>[] {
         )
       },
       size: 170,
-<<<<<<< HEAD
-      meta: { label: t('Quota') },
-=======
->>>>>>> upstream/main
     },
     {
       accessorKey: 'group',
@@ -255,10 +235,6 @@ export function useUsersColumns(): ColumnDef<User>[] {
         return group.includes(searchValue)
       },
       size: 140,
-<<<<<<< HEAD
-      meta: { label: t('Group') },
-=======
->>>>>>> upstream/main
     },
     {
       accessorKey: 'role',
@@ -285,10 +261,6 @@ export function useUsersColumns(): ColumnDef<User>[] {
       },
       enableSorting: false,
       size: 120,
-<<<<<<< HEAD
-      meta: { label: t('Role') },
-=======
->>>>>>> upstream/main
     },
     {
       id: 'invite_info',
@@ -376,11 +348,7 @@ export function useUsersColumns(): ColumnDef<User>[] {
         )
       },
       size: 180,
-<<<<<<< HEAD
-      meta: { label: t('Created At'), mobileHidden: true },
-=======
       meta: { mobileHidden: true },
->>>>>>> upstream/main
     },
     {
       accessorKey: 'last_login_at',
@@ -394,11 +362,7 @@ export function useUsersColumns(): ColumnDef<User>[] {
         )
       },
       size: 180,
-<<<<<<< HEAD
-      meta: { label: t('Last Login'), mobileHidden: true },
-=======
       meta: { mobileHidden: true },
->>>>>>> upstream/main
     },
     {
       id: 'actions',

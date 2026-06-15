@@ -648,11 +648,7 @@
     "Change language": "Change language",
     "Change Password": "Change Password",
     "Change To": "Change To",
-<<<<<<< HEAD
-    "Change status to": "Change status to",
-=======
     "Changed Fields": "Changed Fields",
->>>>>>> upstream/main
     "Changes are written to the settings draft on save.": "Changes are written to the settings draft on save.",
     "Changing...": "Changing...",
     "Channel": "Channel",
@@ -1176,9 +1172,6 @@
     "Delete selected channels": "Delete selected channels",
     "Delete selected models": "Delete selected models",
     "Deleted": "Deleted",
-<<<<<<< HEAD
-    "Deleted {{count}} invalid keys": "Deleted {{count}} invalid keys",
-=======
     "Deleted a custom OAuth provider": "Deleted a custom OAuth provider",
     "Deleted a deployment": "Deleted a deployment",
     "Deleted a model": "Deleted a model",
@@ -1189,7 +1182,6 @@
     "Deleted all disabled channels ({{count}})": "Deleted all disabled channels ({{count}})",
     "Deleted channel {{name}} (ID: {{id}})": "Deleted channel {{name}} (ID: {{id}})",
     "Deleted invalid redemption codes": "Deleted invalid redemption codes",
->>>>>>> upstream/main
     "Deleted successfully": "Deleted successfully",
     "Deleted user {{username}} (ID: {{id}})": "Deleted user {{username}} (ID: {{id}})",
     "Deleting will permanently remove this subscription record (including benefit details). Continue?": "Deleting will permanently remove this subscription record (including benefit details). Continue?",

@@ -45,17 +45,10 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { ConfirmDialog } from '@/components/confirm-dialog'
-<<<<<<< HEAD
-import { DataTableColumnHeader } from '@/components/data-table'
-import { GroupBadge } from '@/components/group-badge'
-import { ProviderBadge } from '@/components/provider-badge'
-import { StatusBadge, StatusBadgeList } from '@/components/status-badge'
-=======
 import { BadgeListCell } from '@/components/data-table'
 import { GroupBadge } from '@/components/group-badge'
 import { ProviderBadge } from '@/components/provider-badge'
 import { StatusBadge } from '@/components/status-badge'
->>>>>>> upstream/main
 import { TableId } from '@/components/table-id'
 import { TruncatedText } from '@/components/truncated-text'
 import { getCodexUsage } from '../api'
@@ -644,14 +637,6 @@ export function useChannelsColumns(): ColumnDef<Channel>[] {
                 </Tooltip>
               </TooltipProvider>
             )}
-<<<<<<< HEAD
-            <ProviderBadge
-              iconKey={iconName}
-              label={typeName}
-              copyable={false}
-              showDot={false}
-            />
-=======
             <TooltipProvider delay={300}>
               <Tooltip>
                 <TooltipTrigger
@@ -670,7 +655,6 @@ export function useChannelsColumns(): ColumnDef<Channel>[] {
                 <TooltipContent side='top'>{typeName}</TooltipContent>
               </Tooltip>
             </TooltipProvider>
->>>>>>> upstream/main
             {isIonet && (
               <TooltipProvider delay={100}>
                 <Tooltip>

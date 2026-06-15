@@ -114,10 +114,6 @@ export function useTaskLogsColumns(isAdmin: boolean): ColumnDef<TaskLog>[] {
         )
       },
       size: 180,
-<<<<<<< HEAD
-      meta: { label: t('Submit Time') },
-=======
->>>>>>> upstream/main
     },
   ]
 
