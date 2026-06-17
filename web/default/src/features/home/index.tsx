@@ -17,17 +17,17 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { useTranslation } from 'react-i18next'
-import { useAuthStore } from '@/stores/auth-store'
 import { Markdown } from '@/components/ui/markdown'
 import { PublicLayout } from '@/components/layout'
 import { Footer } from '@/components/layout/components/footer'
-import { CTA, Features, Hero, HowItWorks, Stats } from './components'
 import { useHomePageContent } from './hooks'
+import { PageTransition } from '@/components/page-transition'
+import { HeroWithTest } from './components/sections/hero-with-test'
+import { RelayStationTabs } from './components/sections/relay-station-tabs'
+import { FaqSection } from './components/sections/faq-section'
 
 export function Home() {
   const { t } = useTranslation()
-  const { auth } = useAuthStore()
-  const isAuthenticated = !!auth.user
   const { content, isLoaded, isUrl } = useHomePageContent()
 
   if (!isLoaded) {
@@ -62,11 +62,11 @@ export function Home() {
 
   return (
     <PublicLayout showMainContainer={false}>
-      <Hero isAuthenticated={isAuthenticated} />
-      <Stats />
-      <Features />
-      <HowItWorks />
-      <CTA isAuthenticated={isAuthenticated} />
+      <PageTransition className='mx-auto w-full max-w-[1200px] space-y-12 px-4 py-16 sm:px-6 lg:px-8'>
+        <HeroWithTest />
+        <RelayStationTabs />
+        <FaqSection />
+      </PageTransition>
       <Footer />
     </PublicLayout>
   )

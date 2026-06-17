@@ -17,9 +17,9 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Eye, EyeOff, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -38,6 +38,12 @@ import {
   type TestFormState,
 } from '../types'
 
+function maskApiKey(key: string): string {
+  if (!key) return ''
+  if (key.length <= 16) return `${key.slice(0, 4)}...${key.slice(-4)}`
+  return `${key.slice(0, 8)}...${key.slice(-8)}`
+}
+
 interface TestFormProps {
   onSubmit: (formState: TestFormState) => Promise<void>
   isLoading: boolean
@@ -48,12 +54,19 @@ export function TestForm({ onSubmit, isLoading, onChange }: TestFormProps) {
   const { t } = useTranslation()
   const [apiAddress, setApiAddress] = useState('')
   const [apiKey, setApiKey] = useState('')
-  const [showKey, setShowKey] = useState(false)
+  const [apiKeyFocused, setApiKeyFocused] = useState(false)
+  const apiKeyInputRef = useRef<HTMLInputElement>(null)
   const [model, setModel] = useState(PRESET_MODELS[0])
   const [customModel, setCustomModel] = useState('')
   const [isCustomModel, setIsCustomModel] = useState(false)
   const [protocol, setProtocol] = useState(PROTOCOL_OPTIONS[0].value.toString())
   const [prompt, setPrompt] = useState('')
+
+  useEffect(() => {
+    if (apiKeyFocused && apiKeyInputRef.current) {
+      apiKeyInputRef.current.focus()
+    }
+  }, [apiKeyFocused])
 
   useEffect(() => {
     onChange?.({
@@ -112,30 +125,26 @@ export function TestForm({ onSubmit, isLoading, onChange }: TestFormProps) {
           {/* API Key */}
           <div className='space-y-2'>
             <Label htmlFor='api-key'>{t('Your API Key')}</Label>
-            <div className='relative'>
+            {apiKeyFocused || !apiKey ? (
               <Input
+                ref={apiKeyInputRef}
                 id='api-key'
-                type={showKey ? 'text' : 'password'}
+                type='text'
                 placeholder='sk-...'
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
+                onBlur={() => setApiKeyFocused(false)}
                 required
-                className='pr-10 font-mono'
+                className='font-mono'
               />
-              <Button
-                type='button'
-                variant='ghost'
-                size='icon-xs'
-                className='absolute right-1 top-1/2 -translate-y-1/2'
-                onClick={() => setShowKey(!showKey)}
+            ) : (
+              <div
+                className='border-input flex h-10 w-full cursor-text items-center rounded-md border bg-transparent px-3 text-sm font-mono'
+                onClick={() => setApiKeyFocused(true)}
               >
-                {showKey ? (
-                  <EyeOff className='h-4 w-4' />
-                ) : (
-                  <Eye className='h-4 w-4' />
-                )}
-              </Button>
-            </div>
+                <span className='truncate'>{maskApiKey(apiKey)}</span>
+              </div>
+            )}
             <p className='text-muted-foreground text-xs'>
               {t('Only used locally, not sent to server')}
             </p>

@@ -16,18 +16,26 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
+
 import { api } from '@/lib/api'
-import type { HomePageContentResponse } from './types'
+import type { RelayStationResponse, AINewsResponse, HomepageTestResult, HomepageTestRequest } from './types'
 
-// ============================================================================
-// Home Page APIs
-// ============================================================================
+export async function getRelayStations(): Promise<RelayStationResponse> {
+  const res = await api.get('/api/relay-stations')
+  return res.data.data
+}
 
-/**
- * Get custom home page content
- * Returns Markdown/HTML content or iframe URL
- */
-export async function getHomePageContent(): Promise<HomePageContentResponse> {
+export async function getAINews(): Promise<AINewsResponse> {
+  const res = await api.get('/api/ai-news')
+  return res.data.data
+}
+
+export async function runHomepageTest(payload: HomepageTestRequest): Promise<HomepageTestResult> {
+  const res = await api.post('/api/homepage-test', payload)
+  return res.data.data
+}
+
+export async function getHomePageContent(): Promise<{ success: boolean; data: string }> {
   const res = await api.get('/api/home_page_content')
   return res.data
 }

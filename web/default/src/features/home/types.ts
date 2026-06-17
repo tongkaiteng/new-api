@@ -16,22 +16,63 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-// ============================================================================
-// Home Page Types
-// ============================================================================
 
-/**
- * Response from home page content API
- */
-export interface HomePageContentResponse {
-  success: boolean
-  message?: string
-  data?: string
+export interface RelayStation {
+  id: number
+  name: string
+  group: string
+  status: number
+  response_time: number
+  used_quota: number
+  models: string
+  test_time: number
 }
 
-/**
- * Home page content result from hook
- */
+export interface RelayStationResponse {
+  stations: RelayStation[]
+  updated_at: number
+}
+
+export interface AINewsItem {
+  title: string
+  link: string
+  source: string
+  pub_date: string
+  thumbnail: string
+}
+
+export interface AINewsResponse {
+  articles: AINewsItem[]
+  updated_at: number
+}
+
+export interface TestDimension {
+  name: string
+  score: number
+  passed: boolean
+  details: string
+}
+
+export interface HomepageTestResult {
+  success: boolean
+  dimensions: TestDimension[]
+  total_score: number
+  latency_ms: number
+  model: string
+  ref_model: string
+  prompt_tokens: number
+  completion_tokens: number
+  tokens_per_sec: number
+}
+
+export interface HomepageTestRequest {
+  api_address: string
+  api_key: string
+  model: string
+  ref_model: string
+  cache_detection: boolean
+}
+
 export interface HomePageContentResult {
   content: string
   isLoaded: boolean
