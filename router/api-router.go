@@ -45,6 +45,7 @@ func SetApiRouter(router *gin.Engine) {
 		freeTokenRoute := apiRouter.Group("/free-tokens")
 		freeTokenRoute.Use(middleware.UserAuth())
 		{
+			freeTokenRoute.GET("", controller.GetFreeTokens)
 			freeTokenRoute.GET("/self", controller.GetFreeTokenClaimsSelf)
 			freeTokenRoute.POST("/:id/claim", middleware.CriticalRateLimit(), controller.ClaimFreeToken)
 		}

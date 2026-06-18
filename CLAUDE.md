@@ -1,8 +1,61 @@
-# CLAUDE.md — Project Conventions for new-api
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Overview
 
 This is an AI API gateway/proxy built with Go. It aggregates 40+ upstream AI providers (OpenAI, Claude, Gemini, Azure, AWS Bedrock, etc.) behind a unified API, with user management, billing, rate limiting, and an admin dashboard.
+
+## Commands
+
+### Backend (Go)
+
+```bash
+# Build the entire project
+go build -o new-api .
+
+# Run the server (reads .env or env vars for config)
+./new-api
+
+# Run tests
+go test ./...                              # all packages
+go test -v -run TestName ./controller/     # single test
+
+# Build specific package
+go build github.com/QuantumNous/new-api/service
+```
+
+### Frontend
+
+All frontend commands must be run from `web/default/`:
+
+```bash
+cd web/default
+bun install          # install dependencies
+bun run dev          # start dev server (Rsbuild)
+bun run build        # production build
+bun run typecheck    # TypeScript check only (tsc -b)
+bun run lint         # ESLint
+bun run format       # Prettier
+bun run i18n:sync    # sync translation keys
+```
+
+**Rspack persistent cache**: If builds fail with obscure cache errors (hash mismatch, module deserialize), clear the cache:
+
+```bash
+rm -rf web/default/node_modules/.cache && cd web/default && bun run build
+```
+
+### Docker
+
+```bash
+docker-compose up -d           # production
+docker-compose -f docker-compose.dev.yml up -d  # development (includes MySQL)
+```
+
+### Databases
+
+All three are supported. See `model/main.go` for auto-migration and `common/` for DB-specific helpers.
 
 ## Tech Stack
 
@@ -12,6 +65,7 @@ This is an AI API gateway/proxy built with Go. It aggregates 40+ upstream AI pro
 - **Cache**: Redis (go-redis) + in-memory cache
 - **Auth**: JWT, WebAuthn/Passkeys, OAuth (GitHub, Discord, OIDC, etc.)
 - **Frontend package manager**: Bun (preferred over npm/yarn/pnpm)
+- **Charts**: @visactor/react-vchart (VChart)
 
 ## Architecture
 
@@ -32,11 +86,74 @@ constant/      — Constants (API types, channel types, context keys)
 types/         — Type definitions (relay formats, file sources, errors)
 i18n/          — Backend internationalization (go-i18n, en/zh)
 oauth/         — OAuth provider implementations
-pkg/           — Internal packages (cachex, ionet)
+pkg/           — Internal packages (cachex, ionet, billingexpr)
 web/             — Frontend themes container
  web/default/   — Default frontend (React 19, Rsbuild, Base UI, Tailwind)
   web/classic/   — Classic frontend (React 18, Vite, Semi Design)
   web/default/src/i18n/ — Frontend internationalization (i18next, zh/en/fr/ru/ja/vi)
+```
+
+### Relay Channel Adapters
+
+Each upstream provider has an adapter in `relay/channel/` implementing the `Adaptor` interface (`relay/channel/adapter.go`):
+
+```go
+type Adaptor interface {
+    Init(info *relaycommon.RelayInfo)
+    GetRequestURL(info *relaycommon.RelayInfo) (string, error)
+    SetupRequestHeader(c *gin.Context, req *http.Header, info *relaycommon.RelayInfo) error
+    ConvertOpenAIRequest(c *gin.Context, info *relaycommon.RelayInfo, request *dto.GeneralOpenAIRequest) (any, error)
+    DoRequest(c *gin.Context, info *relaycommon.RelayInfo, requestBody io.Reader) (any, error)
+    DoResponse(c *gin.Context, resp *http.Response, info *relaycommon.RelayInfo) (usage any, err *types.NewAPIError)
+    GetModelList() []string
+    GetChannelName() string
+    // ... additional conversion methods for Claude, Gemini, Rerank, Embedding, Audio, Image
+}
+```
+
+Key methods: `ConvertOpenAIRequest` transforms the unified OpenAI-format request into the provider's native format. `DoResponse` parses the upstream response and extracts usage for billing.
+
+### Frontend Feature Organization
+
+Frontend code under `web/default/src/features/` is organized by feature domain:
+
+```
+features/
+  home/           — Public homepage with test widget, stations, FAQ, AI news
+    components/   — UI components (test-widget/, sections/, station-table/, ai-news/)
+    hooks/        — Data hooks (use-homepage-test, use-relay-stations, use-ai-news)
+    types.ts      — Feature-specific TypeScript types
+    api.ts        — API call functions
+    index.tsx     — Feature entry point
+  api-key-tester/ — Standalone API key tester
+  chat/           — Chat UI
+  dashboard/      — Admin dashboard
+  ...
+```
+
+Shared UI components live in `web/default/src/components/ui/` (shadcn-style).
+
+### New Public API Endpoints
+
+```
+GET  /api/relay-stations  →  controller.GetRelayStations    (relay station listing)
+GET  /api/ai-news         →  controller.GetAINews           (AI news feed)
+POST /api/homepage-test   →  controller.HomepageTest         (rate-limited, multi-dimension API testing)
+```
+
+The homepage-test endpoint runs 4 parallel test requests (knowledge QA, model identity, protocol conformance, response structure) and returns scores + token metrics.
+
+### Key Environment Variables
+
+```
+PORT=3000                        # server port
+SQL_DSN=...                      # MySQL/PostgreSQL connection (omitted = SQLite)
+SQLITE_PATH=...                  # SQLite DB path
+REDIS_CONN_STRING=redis://...    # Redis connection (optional)
+SYNC_FREQUENCY=60               # cache sync interval (seconds)
+RELAY_TIMEOUT=0                  # upstream request timeout (0 = no limit)
+LOG_SQL_DSN=...                  # separate DB for logs (optional)
+STREAMING_REQUEST_WITHOUT_TOKEN=false  # allow streaming without billing
 ```
 
 ## Internationalization (i18n)
