@@ -33,6 +33,25 @@ export interface RelayStationResponse {
   updated_at: number
 }
 
+export interface ModelLeaderboardItem {
+  model_name: string
+  vendor: string
+  vendor_icon?: string
+  success_rate: number
+  avg_latency_ms: number
+  avg_ttft_ms: number
+  avg_tps: number
+  request_count: number
+  token_usage: number
+  model_price: number
+  quota_type: number
+}
+
+export interface ModelLeaderboardResponse {
+  models: ModelLeaderboardItem[]
+  updated_at: number
+}
+
 export interface AINewsItem {
   title: string
   link: string

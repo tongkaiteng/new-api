@@ -4990,6 +4990,16 @@
     "Uptime": "在线率",
     "Use a dedicated test key for more accurate results": "为保障账户安全，建议优先使用测试专用KEY。我们和您一样重视账户安全，请放心使用",
     "Check & Submit": "检测并提交",
-    "Checking...": "检测中..."
+    "Checking...": "检测中...",
+    "Model Leaderboard": "模型排行榜",
+    "Success Rate": "成功率",
+    "Avg Latency": "平均延迟",
+    "TTFT": "首字延迟",
+    "TPS": "生成速度",
+    "Requests": "请求数",
+    "Price": "价格",
+    "LLM Leaderboard & AI News": "LLM 排行榜 & AI 资讯",
+    "No model data available yet": "暂无模型数据",
+    "Model": "模型"
   }
 }

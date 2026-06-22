@@ -18,10 +18,15 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import { api } from '@/lib/api'
-import type { RelayStationResponse, AINewsResponse, HomepageTestResult, HomepageTestRequest } from './types'
+import type { RelayStationResponse, AINewsResponse, HomepageTestResult, HomepageTestRequest, ModelLeaderboardResponse } from './types'
 
 export async function getRelayStations(): Promise<RelayStationResponse> {
   const res = await api.get('/api/relay-stations')
+  return res.data.data
+}
+
+export async function getModelLeaderboard(): Promise<ModelLeaderboardResponse> {
+  const res = await api.get('/api/model-leaderboard')
   return res.data.data
 }
 

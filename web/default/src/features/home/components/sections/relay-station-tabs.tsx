@@ -21,36 +21,36 @@ import { useTranslation } from 'react-i18next'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { StationTable } from '../station-table/station-table'
+import { ModelLeaderboardTable } from '../model-leaderboard/model-leaderboard-table'
 import { NewsGrid } from '../ai-news/news-grid'
-import { useRelayStations } from '../../hooks/use-relay-stations'
+import { useModelLeaderboard } from '../../hooks/use-model-leaderboard'
 import { useAINews } from '../../hooks/use-ai-news'
 
 export function RelayStationTabs() {
   const { t } = useTranslation()
-  const stationsQuery = useRelayStations()
+  const leaderboardQuery = useModelLeaderboard()
   const newsQuery = useAINews()
 
   return (
     <Card className='border-border/50 shadow-none'>
       <CardHeader className='pb-3'>
-        <CardTitle className='text-lg font-semibold tracking-tight'>中转站 &amp; AI 资讯</CardTitle>
+        <CardTitle className='text-lg font-semibold tracking-tight'>{t('LLM Leaderboard & AI News')}</CardTitle>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue='stations'>
+        <Tabs defaultValue='leaderboard'>
           <TabsList className='mb-4'>
-            <TabsTrigger value='stations'>{t('Relay Stations')}</TabsTrigger>
+            <TabsTrigger value='leaderboard'>{t('Model Leaderboard')}</TabsTrigger>
             <TabsTrigger value='news'>{t('AI News')}</TabsTrigger>
           </TabsList>
-          <TabsContent value='stations'>
-            {stationsQuery.isLoading ? (
+          <TabsContent value='leaderboard'>
+            {leaderboardQuery.isLoading ? (
               <div className='space-y-3'>
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Skeleton key={i} className='h-10 w-full' />
                 ))}
               </div>
             ) : (
-              <StationTable stations={stationsQuery.data?.stations || []} />
+              <ModelLeaderboardTable models={leaderboardQuery.data?.models || []} />
             )}
           </TabsContent>
           <TabsContent value='news'>

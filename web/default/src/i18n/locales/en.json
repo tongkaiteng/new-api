@@ -4993,6 +4993,16 @@
     "Uptime": "Uptime",
     "Use a dedicated test key for more accurate results": "Use a dedicated test key for more accurate results",
     "Check & Submit": "Check & Submit",
-    "Checking...": "Checking..."
+    "Checking...": "Checking...",
+    "Model Leaderboard": "Model Leaderboard",
+    "Success Rate": "Success Rate",
+    "Avg Latency": "Avg Latency",
+    "TTFT": "TTFT",
+    "TPS": "TPS",
+    "Requests": "Requests",
+    "Price": "Price",
+    "LLM Leaderboard & AI News": "LLM Leaderboard & AI News",
+    "No model data available yet": "No model data available yet",
+    "Model": "Model"
   }
 }
