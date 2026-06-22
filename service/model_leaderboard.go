@@ -21,6 +21,7 @@ type ModelLeaderboardItem struct {
 	RequestCount int64   `json:"request_count"`
 	TokenUsage   int64   `json:"token_usage"`
 	ModelPrice   float64 `json:"model_price"`
+	ModelRatio   float64 `json:"model_ratio"`
 	QuotaType    int     `json:"quota_type"`
 }
 
@@ -93,6 +94,7 @@ func GetModelLeaderboard() (*ModelLeaderboardResponse, error) {
 				item.VendorIcon = v.Icon
 			}
 			item.ModelPrice = p.ModelPrice
+			item.ModelRatio = p.ModelRatio
 			item.QuotaType = p.QuotaType
 			if item.QuotaType != 1 && item.QuotaType != 0 {
 				item.QuotaType = 0

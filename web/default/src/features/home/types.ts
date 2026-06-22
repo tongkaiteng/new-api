@@ -44,6 +44,7 @@ export interface ModelLeaderboardItem {
   request_count: number
   token_usage: number
   model_price: number
+  model_ratio: number
   quota_type: number
 }
 

@@ -89,7 +89,7 @@ export function ModelLeaderboardTable({ models }: ModelLeaderboardTableProps) {
                   {formatCount(m.request_count)}
                 </td>
                 <td className='text-muted-foreground px-3 py-2.5 text-right'>
-                  {formatPrice(m.model_price, m.quota_type)}
+                  {formatPrice(m.model_price, m.model_ratio, m.quota_type)}
                 </td>
               </tr>
             )
@@ -119,8 +119,8 @@ function formatCount(value: number): string {
   return String(value)
 }
 
-function formatPrice(price: number, quotaType: number): string {
-  if (!price || price <= 0) return '—'
-  if (quotaType === 1) return `$${price.toFixed(2)}`
-  return `×${price.toFixed(1)}`
+function formatPrice(price: number, ratio: number, quotaType: number): string {
+  if (quotaType === 1 && price > 0) return `$${price.toFixed(2)}`
+  if (ratio > 0) return `×${ratio.toFixed(1)}`
+  return '—'
 }
