@@ -41,8 +41,8 @@ func SetApiRouter(router *gin.Engine) {
 		apiRouter.GET("/rankings", middleware.HeaderNavModuleAuth("rankings"), controller.GetRankings)
 		apiRouter.GET("/relay-stations", controller.GetRelayStations)
 		apiRouter.GET("/model-leaderboard", controller.GetModelLeaderboard)
-	apiRouter.GET("/ai-news", controller.GetAINews)
-	apiRouter.POST("/homepage-test", middleware.CriticalRateLimit(), controller.HomepageTest)
+		apiRouter.GET("/ai-news", controller.GetAINews)
+		apiRouter.POST("/homepage-test", middleware.CriticalRateLimit(), controller.HomepageTest)
 		freeTokenRoute := apiRouter.Group("/free-tokens")
 		freeTokenRoute.Use(middleware.UserAuth())
 		{
