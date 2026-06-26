@@ -111,8 +111,6 @@ func main() {
 		go controller.AutomaticallyUpdateChannels(frequency)
 	}
 
-	go controller.AutomaticallyTestChannels()
-
 	// Free API key periodic test task (every 3 minutes)
 	go controller.StartFreeApiKeyTestTask()
 
